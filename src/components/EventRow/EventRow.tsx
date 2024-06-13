@@ -5,7 +5,7 @@ const EventRow = () => {
   return (
     <StyledEventRow>
       <td>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit{/*Lorem ipsum dolor sit amet, consectetur adipiscing elit*/}
       </td>
       <td>
         <p>01.01</p>

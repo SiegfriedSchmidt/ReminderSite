@@ -7,9 +7,9 @@ const EventsTable = () => {
   return (
     <StyledEventsTable>
       <tr>
-        <th>Название<img src={ascendingIcon} alt="sort"/></th>
-        <th>Дата<img src={ascendingIcon} alt="sort"/></th>
-        <th>До<img src={ascendingIcon} alt="sort"/></th>
+        <td>Название<img src={ascendingIcon} alt="sort"/></td>
+        <td>Дата<img src={ascendingIcon} alt="sort"/></td>
+        <td>До<img src={ascendingIcon} alt="sort"/></td>
       </tr>
       <EventRow/>
       <EventRow/>

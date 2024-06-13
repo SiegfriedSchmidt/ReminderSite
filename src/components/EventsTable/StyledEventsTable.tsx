@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {textStyle} from "../../styles/Styles.tsx";
 
-export const StyledEventsTable = styled.table`
+export const StyledEventsTable = styled.div`
     border: 2px black solid;
     border-radius: 10px;
     width: calc(100% - 12px);
@@ -9,22 +9,35 @@ export const StyledEventsTable = styled.table`
     margin-top: 1rem;
     box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
     padding: 0.6rem;
+    
+    tr {
+        display: block;
+        vertical-align: middle;
+    }
 
-    th {
-        padding-bottom: 1rem;
-        text-align: left;
+    td img {
+        padding-left: 0.2rem;
+    }
+    
+    td {
+        display: inline-block;
+        text-align: center;
+        font-size: 1.2rem;
+        padding: 0.5rem 0 0.5rem 0;
         ${textStyle}
     }
     
-    th img {
-        padding-left: 0.4rem;
+    td:first-child {
+        width: calc(100% - 9rem);
+        padding-left: 0.8rem;
+        text-align: left;
     }
-
-    th:nth-child(2) {
+    
+    td:nth-child(2) {
         width: 5rem;
     }
 
-    th:last-child {
-        width: 3rem;
+    td:nth-child(3) {
+        width: 4rem;
     }
 `
