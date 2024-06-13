@@ -13,9 +13,7 @@ export const StyledButtonAddEvent = styled(Link)`
     transition: 0.5s;
 
     img {
-        margin: auto;
-        //top: 2px;
-        //position: relative;
+        transform: translate(21px, 21px);
     }
 
     &:hover {

@@ -1,25 +1,21 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {StyledEventsTable} from "./StyledEventsTable.tsx";
-import ascendingIcon from "../../assets/ascending.svg"
 import EventDataRow from "../EventRow/EventDataRow.tsx";
 import ButtonAddEvent from "../ButtonAddEvent/ButtonAddEvent.tsx";
-import {StyledEventRow} from "./StyledEventRow.tsx";
-import {StyledEventCell} from "./StyledEventCell.tsx";
 import EventHeadRow from "../EventRow/EventHeadRow.tsx";
+import EventData from "../../types/EventData.ts";
 
-const EventsTable = () => {
+interface EventsTableProps {
+  eventsData: EventData[];
+}
+
+const EventsTable: FC<EventsTableProps> = ({eventsData}) => {
+
     return (
       <div style={{position: "relative"}}>
         <StyledEventsTable>
           <EventHeadRow/>
-          <EventDataRow/>
-          <EventDataRow/>
-          <EventDataRow/>
-          <EventDataRow/>
-          <EventDataRow/>
-          <EventDataRow/>
-          <EventDataRow/>
-          <EventDataRow/>
+          {eventsData.map((eventData, idx) => <EventDataRow key={idx} data={eventData}/>)}
         </StyledEventsTable>
         <ButtonAddEvent/>
       </div>
