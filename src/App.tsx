@@ -1,12 +1,12 @@
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom";
 import RootLayout from "./layouts/RootLayout.tsx";
-import HomePage from "./pages/HomePage.tsx";
-import AboutPage from "./pages/AboutPage.tsx";
-import AccountPage from "./pages/AccountPage.tsx";
-import EventPage from "./pages/EventPage.tsx";
-import LoginPage from "./pages/LoginPage.tsx";
-import RegisterPage from "./pages/RegisterPage.tsx";
-import NotFoundPage from "./pages/NotFoundPage.tsx";
+import HomePage from "./pages/HomePage/HomePage.tsx";
+import AboutPage from "./pages/AboutPage/AboutPage.tsx";
+import AccountPage from "./pages/AccountPage/AccountPage.tsx";
+import EventPage from "./pages/EventPage/EventPage.tsx";
+import LoginPage from "./pages/LoginPage/LoginPage.tsx";
+import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.tsx";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {textColor} from "../../styles/Vars.tsx";
+import {textStyle} from "../../styles/Styles.tsx";
 
 const StyledHeader = styled.header`
     display: flex;
@@ -22,10 +22,8 @@ const StyledHeader = styled.header`
     }
 
     nav p {
+        ${textStyle};
         font-size: 1.2rem;
-        font-family: Nunito, sans-serif;
-        font-weight: bolder;
-        color: ${textColor};
         padding-left: 0.6rem;
     }
 `

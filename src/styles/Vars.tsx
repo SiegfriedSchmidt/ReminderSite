@@ -1,1 +1,0 @@
-export const textColor = "#1F132A"
