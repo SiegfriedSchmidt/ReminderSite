@@ -6,6 +6,7 @@ import AccountPage from "./pages/AccountPage.tsx";
 import EventPage from "./pages/EventPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx";
+import NotFoundPage from "./pages/NotFoundPage.tsx";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
@@ -15,6 +16,7 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route path="/event" element={<EventPage/>}/>
     <Route path="/login" element={<LoginPage/>}/>
     <Route path="/register" element={<RegisterPage/>}/>
+    <Route path="*" element={<NotFoundPage/>}/>
   </Route>
 ))
 
