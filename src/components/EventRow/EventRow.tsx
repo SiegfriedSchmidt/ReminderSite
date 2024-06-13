@@ -8,8 +8,7 @@ const EventRow = () => {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit{/*Lorem ipsum dolor sit amet, consectetur adipiscing elit*/}
       </td>
       <td>
-        <p>01.01</p>
-        <p>1970</p>
+        01.01 1970
       </td>
       <td>
         365
