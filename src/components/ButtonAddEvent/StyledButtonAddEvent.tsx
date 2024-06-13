@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import {Link} from "react-router-dom";
 
-export const StyledButtonAddEvent = styled.button`
+export const StyledButtonAddEvent = styled(Link)`
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -12,8 +13,9 @@ export const StyledButtonAddEvent = styled.button`
     transition: 0.5s;
 
     img {
-        top: 2px;
-        position: relative;
+        margin: auto;
+        //top: 2px;
+        //position: relative;
     }
 
     &:hover {

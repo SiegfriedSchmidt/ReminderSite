@@ -1,4 +1,5 @@
 import {createGlobalStyle} from "styled-components";
+import {widthLimit} from "./Styles.tsx";
 
 const GlobalStyles = createGlobalStyle`
     * {
@@ -8,7 +9,7 @@ const GlobalStyles = createGlobalStyle`
     }
     
     #root {
-        width: min(100%, 640px);
+        width: min(100%, ${widthLimit});
         margin: auto;
     }
 `
