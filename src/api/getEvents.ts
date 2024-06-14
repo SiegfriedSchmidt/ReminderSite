@@ -1,36 +1,43 @@
 import EventData from "../types/EventData.ts";
+import getID from "../utils/getID.tsx";
 
 const stubData: EventData[] = [
   {
     title: "Lorem ",
     date: new Date("01.01.1970"),
     until: Math.ceil(Math.random() * 365),
-    description: ""
+    description: "",
+    id: getID()
   }, {
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    title: "Lorem ",
     date: new Date("01.01.1970"),
     until: Math.ceil(Math.random() * 365),
-    description: ""
+    description: "",
+    id: getID()
   }, {
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    title: "Lorem ",
     date: new Date("01.01.1970"),
     until: Math.ceil(Math.random() * 365),
-    description: ""
+    description: "",
+    id: getID()
   }, {
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    date: new Date("01.01.2020"),
-    until: Math.ceil(Math.random() * 365),
-    description: ""
-  }, {
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    title: "Lorem ",
     date: new Date("01.01.1970"),
     until: Math.ceil(Math.random() * 365),
-    description: ""
+    description: "",
+    id: getID()
   }, {
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+    title: "Lorem ",
     date: new Date("01.01.1970"),
     until: Math.ceil(Math.random() * 365),
-    description: ""
+    description: "",
+    id: getID()
+  }, {
+    title: "Lorem ",
+    date: new Date("01.01.1970"),
+    until: Math.ceil(Math.random() * 365),
+    description: "",
+    id: getID()
   },
 ]
 

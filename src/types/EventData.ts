@@ -3,4 +3,5 @@ export default interface EventData {
   date: Date;
   until: number;
   description: string
+  id: string
 }
