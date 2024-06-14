@@ -1,13 +1,12 @@
 import React from 'react';
-import {useParams} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
+import EventEdit from "../../components/EventEdit/EventEdit.tsx";
 
 const EventPage = () => {
-  const {id} = useParams();
+  const location = useLocation();
 
   return (
-    <div>
-      <h1>Event {id}</h1>
-    </div>
+    location?.state ? <EventEdit eventData={location.state}/> : <Navigate to={'/'}/>
   );
 };
 

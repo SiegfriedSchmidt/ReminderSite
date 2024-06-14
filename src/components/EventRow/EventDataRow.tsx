@@ -13,7 +13,7 @@ const EventDataRow: FC<EventDataRowInterface> = ({data}) => {
   const navigate = useNavigate();
 
   function onClick() {
-    navigate("/event/" + data.id);
+    navigate("/event", {state: data});
   }
 
   return (
