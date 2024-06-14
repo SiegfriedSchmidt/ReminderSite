@@ -10,5 +10,5 @@ export const StyledEventsTable = styled.div`
 
     margin: 1rem auto auto;
     box-shadow: inset 0 4px 4px rgba(0, 0, 0, 0.25);
-    padding: 0 0 0.6rem 0;
+    padding: 0 0 90px 0;
 `

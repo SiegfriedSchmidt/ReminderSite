@@ -1,24 +1,34 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {StyledEventRow} from "../EventsTable/StyledEventRow.tsx";
 import {StyledEventCell} from "../EventsTable/StyledEventCell.tsx";
 import ascendingIcon from "../../assets/ascending.svg";
 import descendingIcon from "../../assets/descending.svg";
 import {StyledEventHeadContainer} from "../EventsTable/StyledEventHeadContainer.tsx";
+import EventData from "../../types/EventData.ts";
 
-const EventHeadRow = () => {
-  const [sortIdx, setSortIdx] = useState(0);
+interface EventHeadRowProps {
+  sortEvents: (column: keyof EventData) => void
+}
+
+const EventHeadRow: FC<EventHeadRowProps> = ({sortEvents}) => {
+  const [sortColumn, setSortColumn] = useState<keyof EventData>('title');
+
+  function onClick(column: keyof EventData) {
+    sortEvents(column);
+    setSortColumn(column);
+  }
 
   return (
     <StyledEventHeadContainer>
       <StyledEventRow>
-        <StyledEventCell onClick={() => setSortIdx(0)}>
-          Название<img src={sortIdx === 0 ? descendingIcon : ascendingIcon} alt="sort"/>
+        <StyledEventCell onClick={() => onClick('title')}>
+          Название<img src={sortColumn === 'title' ? descendingIcon : ascendingIcon} alt="sort"/>
         </StyledEventCell>
-        <StyledEventCell onClick={() => setSortIdx(1)}>
-          Дата<img src={sortIdx === 1 ? descendingIcon : ascendingIcon} alt="sort"/>
+        <StyledEventCell onClick={() => onClick('date')}>
+          Дата<img src={sortColumn === 'date' ? descendingIcon : ascendingIcon} alt="sort"/>
         </StyledEventCell>
-        <StyledEventCell onClick={() => setSortIdx(2)}>
-          До<img src={sortIdx === 2 ? descendingIcon : ascendingIcon} alt="sort"/>
+        <StyledEventCell onClick={() => onClick('until')}>
+          До<img src={sortColumn === 'until' ? descendingIcon : ascendingIcon} alt="sort"/>
         </StyledEventCell>
       </StyledEventRow>
     </StyledEventHeadContainer>

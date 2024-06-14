@@ -7,14 +7,15 @@ import EventData from "../../types/EventData.ts";
 
 interface EventsTableProps {
   eventsData: EventData[];
+  sortEvents: (column: keyof EventData) => void
 }
 
-const EventsTable: FC<EventsTableProps> = ({eventsData}) => {
+const EventsTable: FC<EventsTableProps> = ({eventsData, sortEvents}) => {
 
     return (
       <div style={{position: "relative"}}>
         <StyledEventsTable>
-          <EventHeadRow/>
+          <EventHeadRow sortEvents={sortEvents}/>
           {eventsData.map((eventData, idx) => <EventDataRow key={idx} data={eventData}/>)}
         </StyledEventsTable>
         <ButtonAddEvent/>
