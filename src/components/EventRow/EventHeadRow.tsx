@@ -1,34 +1,38 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import {StyledEventRow} from "../EventsTable/StyledEventRow.tsx";
 import {StyledEventCell} from "../EventsTable/StyledEventCell.tsx";
-import ascendingIcon from "../../assets/ascending.svg";
-import descendingIcon from "../../assets/descending.svg";
 import {StyledEventHeadContainer} from "../EventsTable/StyledEventHeadContainer.tsx";
+import {SortColumnType} from "../../types/SortColumnType.ts";
+import SortImg from "./SortImg.tsx";
 import EventData from "../../types/EventData.ts";
 
 interface EventHeadRowProps {
-  sortEvents: (column: keyof EventData) => void
+  curSorting: SortColumnType
+  sortEvents: (sorting: SortColumnType) => void
 }
 
-const EventHeadRow: FC<EventHeadRowProps> = ({sortEvents}) => {
-  const [sortColumn, setSortColumn] = useState<keyof EventData>('title');
-
+const EventHeadRow: FC<EventHeadRowProps> = ({curSorting, sortEvents}) => {
   function onClick(column: keyof EventData) {
-    sortEvents(column);
-    setSortColumn(column);
+    if (curSorting.column === column) {
+      curSorting.direction = curSorting.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      curSorting.column = column
+      curSorting.direction = 'desc'
+    }
+    sortEvents(curSorting);
   }
 
   return (
     <StyledEventHeadContainer>
       <StyledEventRow>
         <StyledEventCell onClick={() => onClick('title')}>
-          Название<img src={sortColumn === 'title' ? descendingIcon : ascendingIcon} alt="sort"/>
+          <SortImg title='Название' sortColumn='title' curSorting={curSorting}/>
         </StyledEventCell>
         <StyledEventCell onClick={() => onClick('date')}>
-          Дата<img src={sortColumn === 'date' ? descendingIcon : ascendingIcon} alt="sort"/>
+          <SortImg title='Дата' sortColumn='date' curSorting={curSorting}/>
         </StyledEventCell>
         <StyledEventCell onClick={() => onClick('until')}>
-          До<img src={sortColumn === 'until' ? descendingIcon : ascendingIcon} alt="sort"/>
+          <SortImg title='До' sortColumn='until' curSorting={curSorting}/>
         </StyledEventCell>
       </StyledEventRow>
     </StyledEventHeadContainer>
