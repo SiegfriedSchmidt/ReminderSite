@@ -1,5 +1,4 @@
 import React, {FC, InputHTMLAttributes} from 'react';
-import editIcon from "../../assets/edit_icon.svg";
 import {Container, StyledEditTextarea} from "./StyledEditInput.tsx";
 
 interface EditFieldProps extends InputHTMLAttributes<HTMLTextAreaElement> {

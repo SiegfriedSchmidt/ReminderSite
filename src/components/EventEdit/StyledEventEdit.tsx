@@ -20,3 +20,11 @@ export const StyledEventEditBlock = styled.div`
     flex-direction: column;
     align-items: start;
 `
+
+export const StyledButtonEditBlock = styled.div`
+    margin-top: 0.6rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+`
