@@ -1,17 +1,14 @@
-import React, {FC} from 'react';
+import React, {useContext} from 'react';
 import {StyledEventRow} from "../EventsTable/StyledEventRow.tsx";
 import {StyledEventCell} from "../EventsTable/StyledEventCell.tsx";
 import {StyledEventHeadContainer} from "../EventsTable/StyledEventHeadContainer.tsx";
-import {SortColumnType} from "../../types/SortColumnType.ts";
 import SortImg from "./SortImg.tsx";
 import EventData from "../../types/EventData.ts";
+import {EventsDataContext} from "../../context/EventsDataContext.tsx";
 
-interface EventHeadRowProps {
-  curSorting: SortColumnType
-  sortEvents: (sorting: SortColumnType) => void
-}
+const EventHeadRow = () => {
+  const {curSorting, setCurSorting} = useContext(EventsDataContext);
 
-const EventHeadRow: FC<EventHeadRowProps> = ({curSorting, sortEvents}) => {
   function onClick(column: keyof EventData) {
     if (curSorting.column === column) {
       curSorting.direction = curSorting.direction === 'asc' ? 'desc' : 'asc';
@@ -19,7 +16,7 @@ const EventHeadRow: FC<EventHeadRowProps> = ({curSorting, sortEvents}) => {
       curSorting.column = column
       curSorting.direction = 'desc'
     }
-    sortEvents(curSorting);
+    setCurSorting({...curSorting});
   }
 
   return (

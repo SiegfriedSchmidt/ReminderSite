@@ -7,6 +7,8 @@ import EventPage from "./pages/EventPage/EventPage.tsx";
 import LoginPage from "./pages/LoginPage/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.tsx";
+import {useState} from "react";
+import EventsDataProvider from "./context/EventsDataProvider.tsx";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
@@ -21,9 +23,10 @@ const router = createBrowserRouter(createRoutesFromElements(
 ))
 
 function App() {
-
   return (
-    <RouterProvider router={router}/>
+    <EventsDataProvider>
+      <RouterProvider router={router}/>
+    </EventsDataProvider>
   )
 }
 
