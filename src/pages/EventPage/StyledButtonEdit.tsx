@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {buttonColorMain, textStyle} from "../../styles/Styles.tsx";
 
-export const StyledButtonEventEdit = styled.button`
+export const StyledButtonEdit = styled.button`
     ${textStyle};
     width: 165px;
     padding: 0.6rem 0 0.6rem 0;

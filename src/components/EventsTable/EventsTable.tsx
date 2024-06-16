@@ -6,13 +6,13 @@ import EventHeadRow from "../EventRow/EventHeadRow.tsx";
 import {EventsDataContext} from "../../context/EventsDataContext.tsx";
 
 const EventsTable = () => {
-  const {eventsData} = useContext(EventsDataContext);
+    const {eventsData} = useContext(EventsDataContext);
 
     return (
       <div style={{position: "relative"}}>
         <StyledEventsTable>
           <EventHeadRow/>
-          {eventsData.map((eventData, idx) => <EventDataRow key={idx} data={eventData}/>)}
+          {eventsData.map((eventData, idx) => <EventDataRow key={idx} data={eventData} idx={idx}/>)}
         </StyledEventsTable>
         <ButtonAddEvent/>
       </div>

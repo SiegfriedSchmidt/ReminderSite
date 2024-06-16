@@ -7,13 +7,14 @@ import {useNavigate} from "react-router-dom";
 
 interface EventDataRowInterface {
   data: EventData;
+  idx: number
 }
 
-const EventDataRow: FC<EventDataRowInterface> = ({data}) => {
+const EventDataRow: FC<EventDataRowInterface> = ({data, idx}) => {
   const navigate = useNavigate();
 
   function onClick() {
-    navigate("/event", {state: data});
+    navigate("/event/" + idx);
   }
 
   return (

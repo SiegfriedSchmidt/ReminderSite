@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {textStyle} from "../../styles/Styles.tsx";
 
-export const StyledEventEdit = styled.div`
+export const StyledEventPage = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;

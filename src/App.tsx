@@ -7,15 +7,14 @@ import EventPage from "./pages/EventPage/EventPage.tsx";
 import LoginPage from "./pages/LoginPage/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.tsx";
-import {useState} from "react";
-import EventsDataProvider from "./context/EventsDataProvider.tsx";
+import {EventsDataProvider} from "./context/EventsDataContext.tsx";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
     <Route index element={<HomePage/>}/>
     <Route path="/about" element={<AboutPage/>}/>
     <Route path="/account" element={<AccountPage/>}/>
-    <Route path="/event" element={<EventPage/>}/>
+    <Route path="/event/:idx" element={<EventPage/>}/>
     <Route path="/login" element={<LoginPage/>}/>
     <Route path="/register" element={<RegisterPage/>}/>
     <Route path="*" element={<NotFoundPage/>}/>
