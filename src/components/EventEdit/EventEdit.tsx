@@ -4,7 +4,7 @@ import EventData from "../../types/EventData.ts";
 import EditFieldInput from "../EditField/EditFieldInput.tsx";
 import EditFieldTextarea from "../EditField/EditFieldTextarea.tsx";
 import getSeparateDate from "../../utils/getSeparateDate.ts";
-import {StyledButtonEventEdit} from "./StyledButtonEventEdit.ts";
+import {StyledButtonEventEdit} from "./StyledButtonEventEdit.tsx";
 
 interface EventEditProps {
   eventData: EventData;
