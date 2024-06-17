@@ -1,6 +1,6 @@
 export default function getID(): string {
   // return crypto.randomUUID()
-  return Math.ceil(Math.random() * 10000).toString()
+  return Math.floor(Math.random() * Math.floor(Math.random() * Date.now())).toString(16)
 }
 
 console.warn('change crypto')
