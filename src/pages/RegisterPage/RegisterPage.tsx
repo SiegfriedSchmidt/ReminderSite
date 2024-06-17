@@ -1,10 +1,12 @@
 import React from 'react';
+import {Container} from "../LoginPage/StyledLoginPage.tsx";
+import RegisterForm from "../../components/RegisterForm/RegisterForm.tsx";
 
 const RegisterPage = () => {
   return (
-    <div>
-      <h1>Register</h1>
-    </div>
+    <Container>
+      <RegisterForm/>
+    </Container>
   );
 };
 

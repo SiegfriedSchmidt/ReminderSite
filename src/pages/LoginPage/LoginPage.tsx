@@ -1,10 +1,12 @@
 import React from 'react';
+import {Container} from "./StyledLoginPage.tsx";
+import LoginForm from "../../components/LoginForm/LoginForm.tsx";
 
 const LoginPage = () => {
   return (
-    <div>
-      <h1>Login</h1>
-    </div>
+    <Container>
+      <LoginForm/>
+    </Container>
   );
 };
 

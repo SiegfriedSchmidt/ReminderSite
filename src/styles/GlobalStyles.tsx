@@ -8,6 +8,10 @@ const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
     }
     
+    input {
+        outline: none;
+    }
+    
     #root {
         width: min(100%, ${widthLimit});
         margin: auto;
