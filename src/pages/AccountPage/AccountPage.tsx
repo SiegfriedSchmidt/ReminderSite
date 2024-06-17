@@ -11,7 +11,7 @@ const AccountPage = () => {
       <p>(google@gmail.com)</p>
       <Header>Настройки напоминаний</Header>
       <SettingsContainer>
-        <EditFieldInput title="Время"/>
+        <EditFieldInput type="time" defaultValue="08:00:00" title="Время"/>
       </SettingsContainer>
     </Container>
   );

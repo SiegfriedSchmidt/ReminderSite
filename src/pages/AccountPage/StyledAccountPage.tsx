@@ -22,7 +22,7 @@ export const Container = styled.div`
 export const Header = styled.h2`
     ${textStyle};
     font-size: 16pt;
-    margin-top: 15px;
+    margin-top: 10px;
 `
 
 export const SettingsContainer = styled.div`
@@ -30,4 +30,18 @@ export const SettingsContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: start;
+    
+    input {
+        display: block;
+        background-color: white;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        min-height: 1.2em;
+        vertical-align: bottom;
+    }
+    
+    input::-webkit-date-and-time-value {
+        padding-top: 5px;
+        text-align: left;
+    }
 `
