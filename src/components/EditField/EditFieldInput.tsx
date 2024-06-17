@@ -11,7 +11,7 @@ const EditFieldInput: FC<EditFieldProps> = ({title, ...props}) => {
     <Container>
       <h1>{title}</h1>
       <img src={editIcon} alt="edit icon"></img>
-      <StyledEditInput {...props}/>
+      <StyledEditInput type="time" {...props}/>
     </Container>
   );
 };

@@ -25,6 +25,7 @@ export const StyledEditInput = styled.input`
     margin-top: 0.6rem;
     height: 35px;
     padding-left: 10px;
+    padding-right: 30px;
     ${textStyle};
     font-size: 1rem;
     font-weight: 710;
