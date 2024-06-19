@@ -31,6 +31,19 @@ export const StyledEditInput = styled.input`
     font-weight: 710;
     border-radius: 5px;
     border: solid 1px #DDDBDB;
+
+    &[type="time"], &[type="date"] {
+        display: flex;
+        flex-direction: row;
+        background-color: white;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        min-height: 1.2em;
+    }
+
+    &[type="time"]::-webkit-date-and-time-value, &[type="date"]::-webkit-date-and-time-value {
+        text-align: left;
+    }
 `
 
 export const StyledEditTextarea = styled.textarea`

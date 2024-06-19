@@ -7,6 +7,7 @@ import EditFieldTextarea from "../../components/EditField/EditFieldTextarea.tsx"
 import {StyledButtonEdit} from "./StyledButtonEdit.tsx";
 import {useParams} from "react-router-dom";
 import {EventsDataContext} from "../../context/EventsDataContext.tsx";
+import getDateForEditField from "../../utils/getDateForEditField.ts";
 
 const EventPage = () => {
   const {idx} = useParams();
@@ -20,7 +21,7 @@ const EventPage = () => {
         <h1>Событие</h1>
         <StyledEventEditBlock>
           <EditFieldInput title="Название" defaultValue={eventData.title}/>
-          <EditFieldInput title="Дата" defaultValue={getSeparateDate(eventData.date).replace(' ', '.')}/>
+          <EditFieldInput title="Дата" type="date" defaultValue={getDateForEditField(eventData.date)}/>
           <EditFieldTextarea title="Описание" defaultValue={eventData.description}/>
           <StyledButtonEditBlock>
             <StyledButtonEdit>Сохранить</StyledButtonEdit>
