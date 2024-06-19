@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {formBorderColor, textFormColor, textFormStyle} from "../../styles/Styles.tsx";
+import {buttonColorMain, formBorderColor, textFormColor, textFormStyle} from "../../styles/Styles.tsx";
 import {StyledFormField} from "../FormField/StyledFormField.tsx";
 import {Link} from "react-router-dom";
 
@@ -87,9 +87,9 @@ export const StyledFormButton = styled.button`
 
     border: none;
     ${textFormStyle};
-    color: white;
+    color: ${textFormColor};
     font-size: 12pt;
-    background-color: ${textFormColor};
+    background-color: ${buttonColorMain};
     border-radius: 5px;
 `
 
