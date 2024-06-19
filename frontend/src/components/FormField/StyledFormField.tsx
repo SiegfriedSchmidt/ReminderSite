@@ -9,7 +9,7 @@ export const StyledFormField = styled.div`
     width: 100%;
 
     input {
-        padding: 0.5rem 0 0.4rem 0.2rem;
+        padding: 0.5rem 36px 0.4rem 0.2rem;
         width: 266px;
         ${textFormStyle};
         font-size: 12pt;
@@ -17,6 +17,10 @@ export const StyledFormField = styled.div`
         border: none;
         border-radius: 0;
         border-bottom: 2px solid ${textFormColor};
+    }
+    
+    input[type="text"], input[type="email"] {
+        text-overflow: ellipsis;
     }
 
     input::placeholder {

@@ -5,6 +5,7 @@ export const StyledToggleSwitch = styled.label`
     display: inline-block;
     width: 60px;
     height: 34px;
+    -webkit-tap-highlight-color: transparent;
 
     input {
         opacity: 0;
