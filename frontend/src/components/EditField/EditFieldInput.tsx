@@ -6,9 +6,9 @@ interface EditFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   title?: string
 }
 
-const EditFieldInput: FC<EditFieldProps> = ({title, ...props}) => {
+const EditFieldInput: FC<EditFieldProps> = ({title, style, ...props}) => {
   return (
-    <Container>
+    <Container style={style}>
       {title ? <h1>{title}</h1> : <></>}
       <img src={editIcon} alt="edit icon"></img>
       <StyledEditInput {...props}/>

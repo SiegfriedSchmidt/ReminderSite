@@ -1,16 +1,16 @@
-import React, {FC} from 'react';
+import React, {FC, InputHTMLAttributes} from 'react';
 import {StyledSwitchWithText} from "./StyledSwitchWithText.tsx";
 import ToggleSwitch from "../ToggleSwitch/ToggleSwitch.tsx";
 
-interface SwitchWithTextProps {
+interface SwitchWithTextProps extends InputHTMLAttributes<HTMLInputElement> {
   text: string;
 }
 
-const SwitchWithText: FC<SwitchWithTextProps> = ({text}) => {
+const SwitchWithText: FC<SwitchWithTextProps> = ({text, ...props}) => {
   return (
     <StyledSwitchWithText>
       <h1>{text}</h1>
-      <ToggleSwitch/>
+      <ToggleSwitch {...props}/>
     </StyledSwitchWithText>
   );
 };

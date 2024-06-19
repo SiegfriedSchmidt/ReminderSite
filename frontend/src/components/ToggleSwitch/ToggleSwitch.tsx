@@ -1,10 +1,15 @@
-import React from 'react';
+import React, {FC, InputHTMLAttributes} from 'react';
 import {StyledToggleSwitch} from "./StyledToggleSwitch.tsx";
 
-const ToggleSwitch = () => {
+interface ToggleSwitchProps extends InputHTMLAttributes<HTMLInputElement> {
+
+}
+
+
+const ToggleSwitch: FC<ToggleSwitchProps> = ({...props}) => {
   return (
     <StyledToggleSwitch>
-      <input type='checkbox'/>
+      <input {...props} type='checkbox'/>
       <span/>
     </StyledToggleSwitch>
   );
