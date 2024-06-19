@@ -9,6 +9,7 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.tsx";
 import {EventsDataProvider} from "./context/EventsDataContext.tsx";
 import {UserContextProvider} from "./context/UserContext.tsx";
+import {ChakraProvider} from "@chakra-ui/react"
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
@@ -24,11 +25,13 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 function App() {
   return (
-    <UserContextProvider>
-      <EventsDataProvider>
-        <RouterProvider router={router}/>
-      </EventsDataProvider>
-    </UserContextProvider>
+    <ChakraProvider resetCSS={false}>
+      <UserContextProvider>
+        <EventsDataProvider>
+          <RouterProvider router={router}/>
+        </EventsDataProvider>
+      </UserContextProvider>
+    </ChakraProvider>
   )
 }
 
