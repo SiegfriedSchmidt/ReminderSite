@@ -19,7 +19,6 @@ const LoginForm = () => {
       </h1>
       <StyledFieldsWrapper>
         <FormField icon={loginIcon} id='username' type='text' placeholder="Логин"/>
-        <FormField icon={emailIcon} id='email' type='email' placeholder="Почта"/>
         <FormField icon={lockIcon} id='password' type='password' placeholder="Пароль"/>
       </StyledFieldsWrapper>
       <StyledRememberPasswordBlock>

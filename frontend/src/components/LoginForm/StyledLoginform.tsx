@@ -35,12 +35,6 @@ export const StyledFieldsWrapper = styled.div`
         margin-top: 3px;
     }
 
-    ${StyledFormField}:nth-child(2) img {
-        width: 18px;
-        height: 18px;
-        right: 11px
-    }
-
     ${StyledFormField}:last-child img {
         width: 26px;
         height: 26px;
@@ -96,7 +90,7 @@ export const StyledFormButton = styled.button`
 export const StyledRegisterBlock = styled(StyledRememberPasswordBlock)`
     display: block;
     text-align: center;
-    margin-top: 23px;
+    margin-top: 12px;
 
     p {
         margin-right: 10px;

@@ -23,6 +23,7 @@ export const StyledEventEditBlock = styled.div`
 
 export const StyledButtonEditBlock = styled.div`
     margin-top: 0.6rem;
+    margin-bottom: 0.6rem;
     width: 100%;
     display: flex;
     flex-direction: row;

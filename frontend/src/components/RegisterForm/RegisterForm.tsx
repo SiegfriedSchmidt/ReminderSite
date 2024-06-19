@@ -19,6 +19,7 @@ const RegisterForm = () => {
       </h1>
       <StyledRegisterFieldsWrapper>
         <FormField icon={emailIcon} id='email' type='email' placeholder="Почта"/>
+        <FormField icon={loginIcon} id='username' type='text' placeholder="Логин"/>
         <FormField icon={lockIcon} id='password' type='password' placeholder="Пароль"/>
         <FormField icon={lockIcon} id='repeat-password' type='password' placeholder="Повтор пароля"/>
       </StyledRegisterFieldsWrapper>
