@@ -2,7 +2,9 @@ from fastapi import HTTPException, Depends, Request, FastAPI, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
-from lib.models import User, Event, Notification, create_tables
+from starlette.middleware.cors import CORSMiddleware
+
+from lib.models import User, Event, Notification, create_tables, fill_json_data
 from lib.pydantic_models import UserPydantic, SettingsPydantic
 import asyncio
 import uvicorn
@@ -11,6 +13,14 @@ create_tables()
 
 router = APIRouter(prefix='/api')
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @AuthJWT.load_config
 def get_config():
@@ -24,9 +34,11 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
         content={"detail": exc.message}
     )
 
+
 @router.get('/')
 async def main(request: Request):
     return {'title': 'about'}
+
 
 @router.post('/refresh')
 async def refresh(Authorize: AuthJWT = Depends()):
@@ -39,12 +51,18 @@ async def refresh(Authorize: AuthJWT = Depends()):
 
 @router.post('/login')
 async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
-    if not User.select().where(User.username == user.username).exists():
+    selected_user = User.select().where(User.username == user.username)
+    if not selected_user.exists() or (user_auth := selected_user.get()).password != user.password:
         raise HTTPException(status_code=401, detail="Bad username or password")
 
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return {
+        "accessToken": access_token,
+        "refreshToken": refresh_token,
+        "email": user_auth.email,
+        "isAdmin": user_auth.isAdmin
+    }
 
 
 @router.post('/register')
@@ -57,12 +75,12 @@ async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
-@router.get('/user')
+@router.get('/events')
 async def user(Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
 
-    current_user = Authorize.get_jwt_subject()
-    return {"user": current_user}
+    current_user: UserPydantic = Authorize.get_jwt_subject()
+    return [*Event.select().where(User.username == current_user.username).get()]
 
 
 async def main():
@@ -73,10 +91,10 @@ async def main():
 
 
 if __name__ == '__main__':
-    # new_user = User(username='user_1', email='fff@mail.ru', password='fffff', isAdmin=False)
+    # new_user = User(username='bob', email='bob@mail.ru', password='qwerty', isAdmin=False)
     # new_user.save()
 
-    # print(*User.select(), sep='\n')
+    print(*User.select(), sep='\n')
     # print(User.delete().execute())
     # print(Event.delete().execute())
     # print(len([*User.select().where(User.username == 'bob').get().events]))

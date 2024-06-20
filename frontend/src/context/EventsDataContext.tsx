@@ -3,6 +3,7 @@ import EventData from "../types/EventData.ts";
 import {SortColumnType} from "../types/SortColumnType.ts";
 import getEvents from "../api/getEvents.ts";
 import sortEventsData from "../utils/sortEventsData.ts";
+import useUser from "../hooks/useUser.tsx";
 
 interface EventsDataContextSetter {
   eventsData: EventData[]
@@ -34,9 +35,12 @@ export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
 
   useEffect(() => {
     async function getData() {
-      const data = await getEvents()
-      sortEventsData(data, curSorting)
-      setEventsData(data)
+      const rs = await getEvents()
+      if (rs.status !== 'success') {
+        return
+      }
+      sortEventsData(rs.content, curSorting)
+      setEventsData(rs.content)
     }
 
     getData()

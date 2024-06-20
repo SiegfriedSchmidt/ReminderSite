@@ -9,15 +9,21 @@ import RegisterPage from "./pages/RegisterPage/RegisterPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.tsx";
 import {EventsDataProvider} from "./context/EventsDataContext.tsx";
 import {UserContextProvider} from "./context/UserContext.tsx";
+import AnonymousOnly from "./layouts/AnonymousOnly.tsx";
+import RequireAuth from "./layouts/RequireAuth.tsx";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
-    <Route index element={<HomePage/>}/>
+    <Route element={<RequireAuth/>}>
+      <Route index element={<HomePage/>}/>
+      <Route path="/account" element={<AccountPage/>}/>
+      <Route path="/event/:idx" element={<EventPage/>}/>
+    </Route>
+    <Route element={<AnonymousOnly/>}>
+      <Route path="/login" element={<LoginPage/>}/>
+      <Route path="/register" element={<RegisterPage/>}/>
+    </Route>
     <Route path="/about" element={<AboutPage/>}/>
-    <Route path="/account" element={<AccountPage/>}/>
-    <Route path="/event/:idx" element={<EventPage/>}/>
-    <Route path="/login" element={<LoginPage/>}/>
-    <Route path="/register" element={<RegisterPage/>}/>
     <Route path="*" element={<NotFoundPage/>}/>
   </Route>
 ))
