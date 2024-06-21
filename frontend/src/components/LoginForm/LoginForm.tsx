@@ -32,7 +32,21 @@ const LoginForm = () => {
     e.preventDefault();
     const username = e.currentTarget.elements.username.value;
     const password = e.currentTarget.elements.password.value;
+    toast({
+        title: 'ТЕСТ 1',
+        description: `Попробуйте войти заново!`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true
+      })
     const data = await login({username, password})
+    toast({
+        title: 'ТЕСТ 2',
+        description: `Попробуйте войти заново!`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true
+      })
     if (data.status !== 'success') {
       return toast({
         title: 'Неверное имя или пароль!',

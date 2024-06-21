@@ -3,7 +3,7 @@ import useUser from "../hooks/useUser.tsx";
 import {ReactNode, useEffect, useState} from "react";
 
 export const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   }
