@@ -19,8 +19,15 @@ import {AxiosError} from "axios";
 //   }, 1000))
 // }
 
+interface EventServerData {
+  id: number
+  title: string
+  description: string
+  date: string
+  user: number
+}
 
-export default async function getEvents() {
+export default async function getEvents(): Promise<{ status: string, content: EventServerData[] }> {
   try {
     const rs = await api.get("events")
     return {

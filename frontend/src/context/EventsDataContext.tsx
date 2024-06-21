@@ -4,6 +4,7 @@ import {SortColumnType} from "../types/SortColumnType.ts";
 import getEvents from "../api/getEvents.ts";
 import sortEventsData from "../utils/sortEventsData.ts";
 import useUser from "../hooks/useUser.tsx";
+import getDaysBetween from "../utils/getDaysBetween.ts";
 
 interface EventsDataContextSetter {
   eventsData: EventData[]
@@ -39,8 +40,14 @@ export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
       if (rs.status !== 'success') {
         return
       }
-      sortEventsData(rs.content, curSorting)
-      setEventsData(rs.content)
+
+      const todayDate = new Date();
+      const events: EventData[] = rs.content.map(({id, title, date, description}) => {
+        const date1 = new Date(date)
+        return {id: id.toString(), title, date: date1, description, until: getDaysBetween(todayDate, date1)}
+      })
+      sortEventsData(events, curSorting)
+      setEventsData(events)
     }
 
     getData()

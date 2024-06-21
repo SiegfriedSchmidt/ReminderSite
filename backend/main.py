@@ -40,7 +40,7 @@ async def main(request: Request):
     return {'title': 'about'}
 
 
-@router.post('/refresh')
+@router.post('/auth/refresh')
 async def refresh(Authorize: AuthJWT = Depends()):
     Authorize.jwt_refresh_token_required()
 
@@ -49,7 +49,7 @@ async def refresh(Authorize: AuthJWT = Depends()):
     return {"access_token": new_access_token}
 
 
-@router.post('/login')
+@router.post('/auth/login')
 async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
     selected_user = User.select().where(User.username == user.username)
     if not selected_user.exists() or (user_auth := selected_user.get()).password != user.password:
@@ -65,7 +65,7 @@ async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
     }
 
 
-@router.post('/register')
+@router.post('/auth/register')
 async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
     if user.username != "test" or user.password != "test":
         raise HTTPException(status_code=401, detail="Bad username or password")
@@ -80,7 +80,12 @@ async def user(Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
 
     current_user: UserPydantic = Authorize.get_jwt_subject()
-    return [*Event.select().where(User.username == current_user.username).get()]
+
+    events = []
+    for event in User.select().where(User.username == current_user).get().events:
+        events.append(event.__dict__['__data__'])
+
+    return events
 
 
 async def main():
@@ -94,6 +99,7 @@ if __name__ == '__main__':
     # new_user = User(username='bob', email='bob@mail.ru', password='qwerty', isAdmin=False)
     # new_user.save()
 
+    # fill_json_data('bob')
     print(*User.select(), sep='\n')
     # print(User.delete().execute())
     # print(Event.delete().execute())

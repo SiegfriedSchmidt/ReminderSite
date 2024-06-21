@@ -11,6 +11,7 @@ import {EventsDataProvider} from "./context/EventsDataContext.tsx";
 import {UserContextProvider} from "./context/UserContext.tsx";
 import AnonymousOnly from "./layouts/AnonymousOnly.tsx";
 import RequireAuth from "./layouts/RequireAuth.tsx";
+import {AxiosSettings} from "./api/api.ts";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
@@ -32,7 +33,9 @@ function App() {
   return (
     <UserContextProvider>
       <EventsDataProvider>
-        <RouterProvider router={router}/>
+        <AxiosSettings>
+          <RouterProvider router={router}/>
+        </AxiosSettings>
       </EventsDataProvider>
     </UserContextProvider>
   )

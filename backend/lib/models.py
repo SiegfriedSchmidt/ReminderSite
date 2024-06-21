@@ -11,7 +11,7 @@ def create_tables():
 
 
 def fill_json_data(username: str):
-    with open('../test/data.json', 'r') as file:
+    with open('test/data.json', 'r') as file:
         json_data = json.load(file)
 
     user = User.select().where(User.username == username).get()

@@ -3,7 +3,7 @@ import {AxiosError} from "axios";
 
 export default async function login(data: {username: string, password: string}) {
   try {
-    const rs = await api.post("login", data)
+    const rs = await api.post("auth/login", data)
     return {
       status: "success",
       content: rs.data
