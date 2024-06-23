@@ -20,7 +20,7 @@ export const EventsDataContext = createContext<EventsDataContextSetter>(
     getOneEvent: () => undefined,
     setOneEvent: () => {
     },
-    curSorting: {column: 'until', direction: 'asc'},
+    curSorting: {column: 'until', direction: 'desc'},
     setCurSorting: () => {
     }
   }
@@ -32,7 +32,8 @@ interface EventDataProviderProps {
 
 export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
   const [eventsData, setEventsData] = useState<EventData[]>([]);
-  const [curSorting, setCurSorting] = useState<SortColumnType>({column: 'until', direction: 'asc'});
+  const [curSorting, setCurSorting] = useState<SortColumnType>({column: 'until', direction: 'desc'});
+  const {user} = useUser()
 
   useEffect(() => {
     async function getData() {
@@ -51,7 +52,7 @@ export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
     }
 
     getData()
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     sortEventsData(eventsData, curSorting)
