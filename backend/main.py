@@ -4,6 +4,7 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from starlette.middleware.cors import CORSMiddleware
 
+from lib.logger import setup_uvicorn_logger, setup_peewee_logger, logger
 from lib.models import User, Event, Notification, create_tables, fill_json_data
 from lib.pydantic_models import UserPydantic, SettingsPydantic
 import asyncio
@@ -90,8 +91,11 @@ async def user(Authorize: AuthJWT = Depends()):
 
 async def main():
     app.include_router(router)
-    config = uvicorn.Config(app, host='0.0.0.0', port=8000, log_level="info")
+    config = uvicorn.Config(app, host='0.0.0.0', port=8000, log_level="debug", log_config=None)
     server = uvicorn.Server(config)
+    setup_peewee_logger()
+    setup_uvicorn_logger()
+    print(*User.select(), sep='\n')
     await server.serve()
 
 
@@ -100,7 +104,7 @@ if __name__ == '__main__':
     # new_user.save()
 
     # fill_json_data('bob')
-    print(*User.select(), sep='\n')
+
     # print(User.delete().execute())
     # print(Event.delete().execute())
     # print(len([*User.select().where(User.username == 'bob').get().events]))

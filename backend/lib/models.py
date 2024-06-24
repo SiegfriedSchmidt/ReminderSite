@@ -1,8 +1,6 @@
 import peewee
 import json
-from lib.logger import setup_peewee_logger
 
-setup_peewee_logger()
 database = peewee.SqliteDatabase('database.sqlite3', pragmas={'foreign_keys': 1})
 
 
