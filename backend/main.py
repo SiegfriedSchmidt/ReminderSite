@@ -1,15 +1,23 @@
+from pprint import pprint
+
 from fastapi import HTTPException, Depends, Request, FastAPI, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from starlette.middleware.cors import CORSMiddleware
 
+from lib.gmail_api import GmailApi
+from lib.init import secret_folder_path
 from lib.logger import setup_uvicorn_logger, setup_peewee_logger, logger
 from lib.models import User, Event, Notification, create_tables, fill_json_data
-from lib.pydantic_models import UserPydantic, SettingsPydantic
+from lib.pydantic_models import UserPydantic, SettingsPydantic, UserRegistrationPydantic, UsernameEmailPydantic
 import asyncio
 import uvicorn
 
+from lib.verification_codes import VerificationCodes
+
+verification_codes = VerificationCodes()
+gmail_api = GmailApi(secret_folder_path)
 create_tables()
 
 router = APIRouter(prefix='/api')
@@ -51,7 +59,7 @@ async def refresh(Authorize: AuthJWT = Depends()):
 
 
 @router.post('/auth/login')
-async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
+async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depends()):
     selected_user = User.select().where(User.username == user.username)
     if not selected_user.exists() or (user_auth := selected_user.get()).password != user.password:
         raise HTTPException(status_code=401, detail="Bad username or password")
@@ -67,13 +75,24 @@ async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
 
 
 @router.post('/auth/register')
-async def login(user: UserPydantic, Authorize: AuthJWT = Depends()):
-    if user.username != "test" or user.password != "test":
-        raise HTTPException(status_code=401, detail="Bad username or password")
+async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends()):
+    if verification_codes.verify_code(user.code) != user.username:
+        raise HTTPException(status_code=403, detail="Неверный код!")
 
+    selected_user = User.select().where(User.username == user.username)
+    if selected_user.exists():
+        raise HTTPException(status_code=403, detail="Имя пользователя уже занято!")
+
+    User.create(username=user.username, email=user.email, password=user.password, isAdmin=False)
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return {"accessToken": access_token, "refreshToken": refresh_token, 'isAdmin': False}
+
+
+@router.post('/getcode')
+async def getcode(username_email: UsernameEmailPydantic, Authorize: AuthJWT = Depends()):
+    print(verification_codes.add_data_with_code(username_email.username))
+    return "success"
 
 
 @router.get('/events')

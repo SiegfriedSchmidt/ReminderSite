@@ -10,7 +10,7 @@ export default function useUser() {
     sessionStorage.setItem("user", JSON.stringify(user));
   }
 
-  function removeUser(user: User) {
+  function removeUser() {
     setUser(null)
     sessionStorage.removeItem("user")
   }

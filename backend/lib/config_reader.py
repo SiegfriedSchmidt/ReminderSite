@@ -1,7 +1,8 @@
 from pydantic import SecretStr, BaseSettings
 from pathlib import Path
+from lib.init import secret_folder_path
 
-env_path = Path(__file__).parent.parent.absolute() / Path('.env')
+env_path = secret_folder_path / Path('.env')
 
 class Settings(BaseSettings):
     jwt_secret_key: SecretStr

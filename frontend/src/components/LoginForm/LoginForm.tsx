@@ -59,7 +59,6 @@ const LoginForm = () => {
         email,
         notifications: {telegram: true, email, push: false, time: '08:00'}
       })
-      navigate('/account')
     }, 1500)
   }
 

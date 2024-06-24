@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import {textStyle} from "../../styles/Styles.tsx";
+import {Button} from "@chakra-ui/react";
+import {StyledFormButton} from "../../components/LoginForm/StyledLoginform.tsx";
 
 export const Container = styled.div`
     display: flex;
@@ -31,4 +33,9 @@ export const SettingsContainer = styled.div`
     flex-direction: column;
     align-items: start;
     margin-bottom: 10px;
+`
+
+export const StyledExitButton = styled(StyledFormButton)`
+    margin-top: 16px;
+    align-self: center;
 `
