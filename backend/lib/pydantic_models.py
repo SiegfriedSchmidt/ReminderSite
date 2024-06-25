@@ -24,8 +24,10 @@ class EventPydantic(BaseModel):
     description: str
     date: str
 
+
 class EventWithIdPydantic(EventPydantic):
     id: int
+
 
 class SettingsPydantic(BaseModel):
     authjwt_secret_key: str = config.jwt_secret_key.get_secret_value()
@@ -36,17 +38,26 @@ class CodePydantic(BaseModel):
     expiration: int
     data: Any
 
+
 class EventIdPydantic(BaseModel):
     eventId: int
+
 
 class NotificationTimePydantic(BaseModel):
     time: str
 
+
 class NotificationPushPydantic(BaseModel):
     pushEnabled: bool
+
 
 class NotificationEmailPydantic(BaseModel):
     emailEnabled: bool
 
+
 class NotificationTelegramPydantic(BaseModel):
     telegramEnabled: bool
+
+
+class InternalTokenVerifiedPydantic(BaseModel):
+    verified: bool

@@ -1,3 +1,6 @@
+import datetime
+from pprint import pprint
+
 import peewee
 import json
 
@@ -71,6 +74,14 @@ if __name__ == '__main__':
     notifications = [*Notification.select()]
     events = [*Event.select()]
     users = [*User.select()]
+    print(events)
     print(len(notifications), len(events), len(users))
-    print(users)
-    ...
+
+
+    events = []
+    now = datetime.date(2024,6,25)
+    for event in Event.select().where(peewee.fn.date_trunc('month', Event.date) == now):
+        user = event.user.select().get()
+        notifications = user.notifications.get()
+        events.append({'username': user.username, 'title': event.title, 'time': notifications.time})
+    pprint(events)

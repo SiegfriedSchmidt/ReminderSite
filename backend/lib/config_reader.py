@@ -6,6 +6,7 @@ env_path = secret_folder_path / Path('.env')
 
 class Settings(BaseSettings):
     jwt_secret_key: SecretStr
+    internal_token: SecretStr
 
     class Config:
         env_file = env_path

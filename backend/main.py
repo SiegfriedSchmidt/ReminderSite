@@ -1,6 +1,7 @@
 from pprint import pprint
+from typing import Annotated
 
-from fastapi import HTTPException, Depends, Request, FastAPI, APIRouter
+from fastapi import HTTPException, Depends, Request, FastAPI, APIRouter, Header
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
@@ -71,7 +72,7 @@ async def refresh(Authorize: AuthJWT = Depends()):
 @router.post('/auth/login')
 async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depends()):
     selected_user = User.select().where(User.username == user.username)
-    if not selected_user.exists() or verify_password(user_auth := selected_user.get().password, user.password):
+    if not selected_user.exists() or not verify_password(user.password, (user_auth := selected_user.get()).password):
         raise HTTPException(status_code=400, detail="Bad username or password")
 
     access_token = Authorize.create_access_token(subject=user.username)
@@ -128,7 +129,7 @@ async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends(
 async def getcode(username_email: UsernameEmailPydantic, Authorize: AuthJWT = Depends()):
     code = verification_codes.add_data_with_code(username_email.username)
     print(code)
-    gmail_api.send_email(username_email.email, 'Код проверки', code)
+    # gmail_api.send_email(username_email.email, 'Код проверки', code)
     return {"expirationTime": expirationCodeTime}
 
 
@@ -164,7 +165,7 @@ async def event_update(event: EventWithIdPydantic, Authorize: AuthJWT = Depends(
     Authorize.jwt_required()
     current_username = Authorize.get_jwt_subject()
 
-    selected_event = Event.select().join(User).where(Event.id == event.id, User.username == current_username)
+    selected_event = Event.select().join(User).where(Event.id == event.id & User.username == current_username)
     if not selected_event.exists():
         raise HTTPException(status_code=400, detail="Событие отсутствует!")
 
@@ -181,7 +182,7 @@ async def event_delete(data: EventIdPydantic, Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
     current_username = Authorize.get_jwt_subject()
 
-    selected_event = Event.select().join(User).where(Event.id == data.eventId, User.username == current_username)
+    selected_event = Event.select().join(User).where(Event.id == data.eventId & User.username == current_username)
     if not selected_event.exists():
         raise HTTPException(status_code=400, detail="Событие отсутствует!")
 
@@ -233,9 +234,20 @@ async def notification_telegram(data: NotificationTelegramPydantic, Authorize: A
     return "success"
 
 
-@router.post('/internal/get_today_events')
-async def get_today_events(InternalAuthorize: int):
-    ...
+async def verify_internal_token(token: Annotated[str, Header()]):
+    if token == config.jwt_secret_key.get_secret_value():
+        return {"verified": True}
+    else:
+        raise HTTPException(status_code=403, detail="INVALID TOKEN")
+
+
+@router.get('/internal/get_today_events')
+async def get_today_events(commons=Depends(verify_internal_token)):
+    events = []
+    for event in Event.select():
+        time = Notification.select().join(User).join(Event).where(Event.user == User).get().time
+        events.append({'title': event.title, 'time': time})
+    return {'events': events}
 
 
 async def main():
