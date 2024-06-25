@@ -11,6 +11,7 @@ import useUser from "../../hooks/useUser.tsx";
 import register from "../../api/register.ts";
 import ModelWindowCode from "../ModelWindowCode/ModelWindowCode.tsx";
 import getCode from "../../api/getCode.ts";
+import useConfiguredToast from "../../hooks/useConfiguredToast.tsx";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement
@@ -24,7 +25,7 @@ interface FormElement extends HTMLFormElement {
 }
 
 const RegisterForm = () => {
-  const toast = useToast()
+  const {successToast, errorToast, infoToast} = useConfiguredToast()
   const {isOpen, onOpen, onClose} = useDisclosure()
   const {addUser, user} = useUser()
   const [code, setCode] = useState<string>()
@@ -43,25 +44,14 @@ const RegisterForm = () => {
     const repeatPassword = e.currentTarget.elements.repeatPassword.value;
 
     if (password !== repeatPassword) {
-      return toast({
-        title: 'Пароли не совпадают!',
-        status: 'error',
-        duration: 9000,
-        isClosable: true
-      })
+      return errorToast('Пароли не совпадают!')
     }
 
     onOpen()
     setUserFields({email, username, password, repeatPassword})
     getCode({username, email})
 
-    return toast({
-      title: `Код отправлен на почту ${email}`,
-      description: 'У вас есть 10 секунд, чтобы ввести код!',
-      status: 'success',
-      duration: 9000,
-      isClosable: true
-    })
+    return infoToast(`Код отправлен на почту ${email}`, 'У вас есть 10 секунд, чтобы ввести код!')
   }
 
   useEffect(() => {
@@ -69,21 +59,9 @@ const RegisterForm = () => {
       if (userFields && code) {
         const data = await register({...userFields, code})
         if (data.status !== 'success') {
-          return toast({
-            title: data.content.detail,
-            description: `Попробуйте войти заново!`,
-            status: 'error',
-            duration: 9000,
-            isClosable: true
-          })
+          return errorToast(data.content.detail, `Попробуйте войти заново!`)
         }
-        toast({
-          title: 'Вы успешно зарегистрировались!',
-          description: `Имя ${userFields.username}`,
-          status: 'success',
-          duration: 9000,
-          isClosable: true
-        })
+        successToast('Вы успешно зарегистрировались!', `Имя ${userFields.username}`)
         const {accessToken, refreshToken, isAdmin} = data.content
         setTimeout(() => {
           addUser({
