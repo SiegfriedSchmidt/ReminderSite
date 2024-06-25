@@ -29,7 +29,7 @@ interface EventServerData {
 
 export default async function getEvents(): Promise<{ status: string, content: EventServerData[] }> {
   try {
-    const rs = await api.get("events")
+    const rs = await api.get("event/getall")
     return {
       status: "success",
       content: rs.data

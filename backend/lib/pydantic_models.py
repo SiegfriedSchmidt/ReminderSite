@@ -8,13 +8,24 @@ class UserPydantic(BaseModel):
     username: str
     password: str
 
+
 class UserRegistrationPydantic(UserPydantic):
     email: str
     code: str
 
+
 class UsernameEmailPydantic(BaseModel):
     username: str
     email: str
+
+
+class EventPydantic(BaseModel):
+    title: str
+    description: str
+    date: str
+
+class EventWithIdPydantic(EventPydantic):
+    id: int
 
 class SettingsPydantic(BaseModel):
     authjwt_secret_key: str = config.jwt_secret_key.get_secret_value()

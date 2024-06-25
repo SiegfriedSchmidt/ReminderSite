@@ -12,6 +12,7 @@ import {UserContextProvider} from "./context/UserContext.tsx";
 import AnonymousOnly from "./layouts/AnonymousOnly.tsx";
 import RequireAuth from "./layouts/RequireAuth.tsx";
 import {AxiosSettings} from "./api/api.ts";
+import {ChakraProvider} from "@chakra-ui/react";
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route element={<RootLayout/>}>
@@ -34,7 +35,9 @@ function App() {
     <UserContextProvider>
       <EventsDataProvider>
         <AxiosSettings>
-          <RouterProvider router={router}/>
+          {/*<ChakraProvider>*/}
+            <RouterProvider router={router}/>
+          {/*</ChakraProvider>*/}
         </AxiosSettings>
       </EventsDataProvider>
     </UserContextProvider>

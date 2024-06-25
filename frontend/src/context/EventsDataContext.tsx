@@ -65,10 +65,13 @@ export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
     setEventsData([...eventsData])
   }
 
-  function getOneEvent(idx: number) {
-    if (idx >= 0 || idx < eventsData.length) {
+  function getOneEvent(idx: number): EventData | undefined {
+    if (idx >= 0 && idx < eventsData.length) {
       return eventsData[idx]
+    } else if (idx === eventsData.length) {
+      return {title: '', description: '', date: new Date(), until: 0, id: ''}
     }
+
     return undefined
   }
 

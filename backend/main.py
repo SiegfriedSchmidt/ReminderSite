@@ -10,7 +10,7 @@ from lib.gmail_api import GmailApi
 from lib.init import secret_folder_path
 from lib.logger import setup_uvicorn_logger, setup_peewee_logger, logger
 from lib.models import User, Event, Notification, create_tables, fill_json_data
-from lib.pydantic_models import UserPydantic, SettingsPydantic, UserRegistrationPydantic, UsernameEmailPydantic
+from lib.pydantic_models import *
 import asyncio
 import uvicorn
 
@@ -95,17 +95,43 @@ async def getcode(username_email: UsernameEmailPydantic, Authorize: AuthJWT = De
     return "success"
 
 
-@router.get('/events')
-async def user(Authorize: AuthJWT = Depends()):
+@router.get('/event/getall')
+async def event_get_all(Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
 
-    current_user: UserPydantic = Authorize.get_jwt_subject()
+    current_username = Authorize.get_jwt_subject()
 
     events = []
-    for event in User.select().where(User.username == current_user).get().events:
+    for event in User.select().where(User.username == current_username).get().events:
         events.append(event.__dict__['__data__'])
 
     return events
+
+
+@router.post('/event/add')
+async def event_add(event: EventPydantic, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+
+    current_username = Authorize.get_jwt_subject()
+    current_user = User.select().where(User.username == current_username)
+
+    created_event = Event.create(title=event.title, description=event.description, date=event.date, user=current_user)
+    return {"id": created_event.id}
+
+
+@router.post('/event/update')
+async def event_add(event: EventWithIdPydantic, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+
+    selected_event = Event.select().where(Event.id == event.id)
+    if not selected_event.exists():
+        raise HTTPException(status_code=403, detail="Событие отсутствует!")
+
+    selected_event.title = event.title
+    selected_event.description = event.description
+    selected_event.date = event.date
+    selected_event.save()
+    return "success"
 
 
 async def main():
