@@ -103,7 +103,7 @@ const RegisterForm = () => {
   }, [code])
 
   return (
-    <ChakraProvider>
+    <>
       <StyledLoginForm onSubmit={onSubmit}>
         <h1>
           Регистрация
@@ -121,7 +121,7 @@ const RegisterForm = () => {
         </StyledRegisterBlock>
       </StyledLoginForm>
       <ModelWindowCode isOpen={isOpen} onClose={onClose} setCode={setCode}/>
-    </ChakraProvider>
+    </>
   );
 };
 

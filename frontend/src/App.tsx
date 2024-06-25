@@ -35,9 +35,9 @@ function App() {
     <UserContextProvider>
       <EventsDataProvider>
         <AxiosSettings>
-          {/*<ChakraProvider>*/}
+          <ChakraProvider>
             <RouterProvider router={router}/>
-          {/*</ChakraProvider>*/}
+          </ChakraProvider>
         </AxiosSettings>
       </EventsDataProvider>
     </UserContextProvider>

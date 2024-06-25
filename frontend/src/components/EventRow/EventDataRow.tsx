@@ -19,9 +19,9 @@ const EventDataRow: FC<EventDataRowInterface> = ({data, idx}) => {
 
   return (
     <StyledEventRow onClick={onClick}>
-      <StyledEventCell>{data.title}</StyledEventCell>
-      <StyledEventCell>{getSeparateDate(data.date)}</StyledEventCell>
-      <StyledEventCell>{data.until}</StyledEventCell>
+      <StyledEventCell><p>{data.title}</p></StyledEventCell>
+      <StyledEventCell><p>{getSeparateDate(data.date)}</p></StyledEventCell>
+      <StyledEventCell><p>{data.until}</p></StyledEventCell>
     </StyledEventRow>
   );
 };

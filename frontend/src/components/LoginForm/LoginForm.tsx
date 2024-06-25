@@ -33,6 +33,17 @@ const LoginForm = () => {
     const username = e.currentTarget.elements.username.value;
     const password = e.currentTarget.elements.password.value;
     const data = await login({username, password})
+
+    if (!username || !password) {
+      return toast({
+        title: 'Пустые поля!',
+        description: `Попробуйте войти заново!`,
+        status: 'error',
+        duration: 9000,
+        isClosable: true
+      })
+    }
+
     if (data.status !== 'success') {
       return toast({
         title: 'Неверное имя или пароль!',
@@ -63,7 +74,6 @@ const LoginForm = () => {
   }
 
   return (
-    <ChakraProvider>
       <StyledLoginForm onSubmit={onSubmit}>
         <h1>
           Вход
@@ -85,7 +95,6 @@ const LoginForm = () => {
           <StyledLink to='/register'>Зарегистрируйтесь</StyledLink>
         </StyledRegisterBlock>
       </StyledLoginForm>
-    </ChakraProvider>
   );
 };
 

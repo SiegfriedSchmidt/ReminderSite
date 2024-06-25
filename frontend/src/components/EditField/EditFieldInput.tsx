@@ -3,7 +3,7 @@ import {Container, StyledEditInput} from "./StyledEditInput.tsx";
 import editIcon from "../../assets/edit_icon.svg"
 
 interface EditFieldProps extends InputHTMLAttributes<HTMLInputElement> {
-  refInput: ForwardedRef<HTMLInputElement>
+  refInput?: ForwardedRef<HTMLInputElement>
   title?: string
 }
 

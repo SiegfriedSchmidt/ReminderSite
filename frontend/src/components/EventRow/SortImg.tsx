@@ -13,7 +13,9 @@ interface SortImgProps {
 const SortImg: FC<SortImgProps> = ({title, curSorting, sortColumn}) => {
   return (
     <>
-      {title}
+      <p>
+        {title}
+      </p>
       {
         curSorting.column === sortColumn
           ?

@@ -25,33 +25,31 @@ const AccountPage = () => {
 
   return (
     user ?
-      <ChakraProvider>
-        <Container>
-          <img alt='logo' src={logoAccountIcon}/>
-          <h1>{user.username}</h1>
-          <p>({user.email})</p>
-          <Header>Настройки напоминаний</Header>
-          <SettingsContainer>
-            <EditFieldInput type="time" onChange={() => {
-            }} defaultValue={user.notifications.time} title="Время"/>
-            <SwitchWithText text="Всплывающие уведомления" onChange={() => {
-            }} defaultChecked={user.notifications.push}/>
-            <SwitchWithText text="Telegram" defaultChecked={user.notifications.telegram}
-                            onChange={(e) => e.target.checked ?
-                              toast({
-                                  title: 'Телеграм включен',
-                                  description: 'Мы включили телеграм бота для вас',
-                                  status: 'success',
-                                  duration: 9000,
-                                  isClosable: true
-                                }
-                              ) : null}/>
-            <SwitchWithText checked={switchEmail} onChange={(e) => setSwitchEmail(e.target.checked)} text="Почта"/>
-            <AnimatedEditFieldInput show={switchEmail} disabled type="email" defaultValue={user.notifications.email}/>
-            <StyledExitButton onClick={onClickButtonExit}>Выйти</StyledExitButton>
-          </SettingsContainer>
-        </Container>
-      </ChakraProvider>
+      <Container>
+        <img alt='logo' src={logoAccountIcon}/>
+        <h1>{user.username}</h1>
+        <p>({user.email})</p>
+        <Header>Настройки напоминаний</Header>
+        <SettingsContainer>
+          <EditFieldInput type="time" onChange={() => {
+          }} defaultValue={user.notifications.time} title="Время"/>
+          <SwitchWithText text="Всплывающие уведомления" onChange={() => {
+          }} defaultChecked={user.notifications.push}/>
+          <SwitchWithText text="Telegram" defaultChecked={user.notifications.telegram}
+                          onChange={(e) => e.target.checked ?
+                            toast({
+                                title: 'Телеграм включен',
+                                description: 'Мы включили телеграм бота для вас',
+                                status: 'success',
+                                duration: 9000,
+                                isClosable: true
+                              }
+                            ) : null}/>
+          <SwitchWithText checked={switchEmail} onChange={(e) => setSwitchEmail(e.target.checked)} text="Почта"/>
+          <AnimatedEditFieldInput show={switchEmail} disabled type="email" defaultValue={user.notifications.email}/>
+          <StyledExitButton onClick={onClickButtonExit}>Выйти</StyledExitButton>
+        </SettingsContainer>
+      </Container>
       : <></>
   );
 };
