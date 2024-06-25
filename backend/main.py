@@ -62,7 +62,7 @@ async def refresh(Authorize: AuthJWT = Depends()):
 async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depends()):
     selected_user = User.select().where(User.username == user.username)
     if not selected_user.exists() or (user_auth := selected_user.get()).password != user.password:
-        raise HTTPException(status_code=401, detail="Bad username or password")
+        raise HTTPException(status_code=400, detail="Bad username or password")
 
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
@@ -77,11 +77,11 @@ async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depen
 @router.post('/auth/register')
 async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends()):
     if verification_codes.verify_code(user.code) != user.username:
-        raise HTTPException(status_code=403, detail="Неверный код!")
+        raise HTTPException(status_code=400, detail="Неверный код!")
 
     selected_user = User.select().where(User.username == user.username)
     if selected_user.exists():
-        raise HTTPException(status_code=403, detail="Имя пользователя уже занято!")
+        raise HTTPException(status_code=400, detail="Имя пользователя уже занято!")
 
     User.create(username=user.username, email=user.email, password=user.password, isAdmin=False)
     access_token = Authorize.create_access_token(subject=user.username)
@@ -120,18 +120,32 @@ async def event_add(event: EventPydantic, Authorize: AuthJWT = Depends()):
 
 
 @router.post('/event/update')
-async def event_add(event: EventWithIdPydantic, Authorize: AuthJWT = Depends()):
+async def event_update(event: EventWithIdPydantic, Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
+    current_username = Authorize.get_jwt_subject()
 
-    selected_event = Event.select().where(Event.id == event.id)
+    selected_event = Event.select().join(User).where(Event.id == event.id, User.username == current_username)
     if not selected_event.exists():
-        raise HTTPException(status_code=403, detail="Событие отсутствует!")
+        raise HTTPException(status_code=400, detail="Событие отсутствует!")
 
     selected_event = selected_event.get()
     selected_event.title = event.title
     selected_event.description = event.description
     selected_event.date = event.date
     selected_event.save()
+    return "success"
+
+
+@router.post('/event/delete')
+async def event_delete(eventId: EventIdPydantic, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    current_username = Authorize.get_jwt_subject()
+
+    selected_event = Event.select().join(User).where(Event.id == eventId.eventId, User.username == current_username)
+    if not selected_event.exists():
+        raise HTTPException(status_code=400, detail="Событие отсутствует!")
+
+    selected_event.get().delete_instance()
     return "success"
 
 

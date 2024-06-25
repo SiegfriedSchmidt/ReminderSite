@@ -9,6 +9,7 @@ import getDaysBetween from "../utils/getDaysBetween.ts";
 interface EventsDataContextSetter {
   eventsData: EventData[]
   getOneEvent: (idx: number) => EventData | undefined
+  deleteOneEvent: (idx: number) => void
   setOneEvent: (data: EventData, idx: number) => void
   curSorting: SortColumnType
   setCurSorting: (sorting: SortColumnType) => void
@@ -18,6 +19,8 @@ export const EventsDataContext = createContext<EventsDataContextSetter>(
   {
     eventsData: [],
     getOneEvent: () => undefined,
+    deleteOneEvent: () => {
+    },
     setOneEvent: () => {
     },
     curSorting: {column: 'until', direction: 'desc'},
@@ -81,8 +84,16 @@ export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
     return undefined
   }
 
+  function deleteOneEvent(idx: number) {
+    if (idx < 0 || idx >= eventsData.length) return
+    eventsData.splice(idx, 1)
+    sortEventsData(eventsData, curSorting)
+    setEventsData([...eventsData])
+  }
+
   return (
-    <EventsDataContext.Provider value={{eventsData, curSorting, setCurSorting, setOneEvent, getOneEvent}}>
+    <EventsDataContext.Provider
+      value={{eventsData, curSorting, setCurSorting, setOneEvent, getOneEvent, deleteOneEvent}}>
       {children}
     </EventsDataContext.Provider>
   );

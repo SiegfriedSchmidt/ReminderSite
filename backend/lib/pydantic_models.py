@@ -35,3 +35,6 @@ class CodePydantic(BaseModel):
     creation_time: datetime
     expiration: int
     data: Any
+
+class EventIdPydantic(BaseModel):
+    eventId: int

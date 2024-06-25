@@ -5,8 +5,7 @@ import loginIcon from "../../assets/login_icon.svg";
 import emailIcon from "../../assets/email_icon.svg";
 import lockIcon from "../../assets/lock_icon.svg";
 import {StyledRegisterFieldsWrapper, StyledRegisterFormButton} from "./StyledRegisterForm.tsx";
-import login from "../../api/login.ts";
-import {ChakraProvider, useDisclosure, useToast} from '@chakra-ui/react';
+import {useDisclosure} from '@chakra-ui/react';
 import useUser from "../../hooks/useUser.tsx";
 import register from "../../api/register.ts";
 import ModelWindowCode from "../ModelWindowCode/ModelWindowCode.tsx";
@@ -63,16 +62,14 @@ const RegisterForm = () => {
         }
         successToast('Вы успешно зарегистрировались!', `Имя ${userFields.username}`)
         const {accessToken, refreshToken, isAdmin} = data.content
-        setTimeout(() => {
-          addUser({
-            username: userFields.username,
-            isAdmin,
-            accessToken,
-            refreshToken,
-            email: userFields.email,
-            notifications: {telegram: true, email: userFields.email, push: false, time: '08:00'}
-          })
-        }, 1500)
+        addUser({
+          username: userFields.username,
+          isAdmin,
+          accessToken,
+          refreshToken,
+          email: userFields.email,
+          notifications: {telegram: true, email: userFields.email, push: false, time: '08:00'}
+        })
       }
     }
 

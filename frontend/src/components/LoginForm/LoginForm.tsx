@@ -45,16 +45,14 @@ const LoginForm = () => {
     successToast('Вы успешно вошли в аккаунт!', `Имя ${username}`)
 
     const {accessToken, refreshToken, email, isAdmin} = data.content
-    setTimeout(() => {
-      addUser({
-        username,
-        isAdmin,
-        accessToken,
-        refreshToken,
-        email,
-        notifications: {telegram: true, email, push: false, time: '08:00'}
-      })
-    }, 1500)
+    addUser({
+      username,
+      isAdmin,
+      accessToken,
+      refreshToken,
+      email,
+      notifications: {telegram: true, email, push: false, time: '08:00'}
+    })
   }
 
   return (
