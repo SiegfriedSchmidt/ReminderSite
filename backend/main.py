@@ -7,7 +7,7 @@ from fastapi_jwt_auth.exceptions import AuthJWTException
 from starlette.middleware.cors import CORSMiddleware
 
 from lib.gmail_api import GmailApi
-from lib.init import secret_folder_path
+from lib.init import secret_folder_path, expirationCodeTime
 from lib.logger import setup_uvicorn_logger, setup_peewee_logger, logger
 from lib.models import User, Event, Notification, create_tables, fill_json_data
 from lib.pydantic_models import *
@@ -92,7 +92,7 @@ async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends(
 @router.post('/getcode')
 async def getcode(username_email: UsernameEmailPydantic, Authorize: AuthJWT = Depends()):
     print(verification_codes.add_data_with_code(username_email.username))
-    return "success"
+    return {"expirationTime": expirationCodeTime}
 
 
 @router.get('/event/getall')

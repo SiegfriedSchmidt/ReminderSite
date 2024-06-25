@@ -1,4 +1,4 @@
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {FormEvent, useState} from 'react';
 import {StyledLink, StyledLoginForm, StyledRegisterBlock} from "../LoginForm/StyledLoginform.tsx";
 import FormField from "../FormField/FormField.tsx";
 import loginIcon from "../../assets/login_icon.svg";
@@ -26,8 +26,8 @@ interface FormElement extends HTMLFormElement {
 const RegisterForm = () => {
   const {successToast, errorToast, infoToast} = useConfiguredToast()
   const {isOpen, onOpen, onClose} = useDisclosure()
-  const {addUser, user} = useUser()
-  const [code, setCode] = useState<string>()
+  const {addUser} = useUser()
+  const [expirationTime, setExpirationTime] = useState<number | null>(null)
   const [userFields, setUserFields] = useState<{
     email: string,
     username: string,
@@ -35,12 +35,16 @@ const RegisterForm = () => {
     repeatPassword: string
   }>()
 
-  function onSubmit(e: FormEvent<FormElement>) {
+  async function onSubmit(e: FormEvent<FormElement>) {
     e.preventDefault();
     const email = e.currentTarget.elements.email.value;
     const username = e.currentTarget.elements.username.value;
     const password = e.currentTarget.elements.password.value;
     const repeatPassword = e.currentTarget.elements.repeatPassword.value;
+
+    if (!email || !username || !password || !repeatPassword) {
+      return errorToast('Пустые поля!', `Попробуйте войти заново!`)
+    }
 
     if (password !== repeatPassword) {
       return errorToast('Пароли не совпадают!')
@@ -48,14 +52,19 @@ const RegisterForm = () => {
 
     onOpen()
     setUserFields({email, username, password, repeatPassword})
-    getCode({username, email})
+    const rs = await getCode({username, email})
+    if (rs.status !== 'success') {
+      errorToast('Код не был отправлен!', 'Попробуйте еще раз!')
+    }
+    const expirationTime = rs.content.expirationTime
+    setExpirationTime(expirationTime)
 
-    return infoToast(`Код отправлен на почту ${email}`, 'У вас есть 10 секунд, чтобы ввести код!')
+    return infoToast(`Код отправлен на почту ${email}`, `У вас есть ${expirationTime} секунд, чтобы ввести код!`)
   }
 
-  useEffect(() => {
+  function onCompeleteCode(code: string) {
     async function request() {
-      if (userFields && code) {
+      if (userFields) {
         const data = await register({...userFields, code})
         if (data.status !== 'success') {
           return errorToast(data.content.detail, `Попробуйте войти заново!`)
@@ -75,7 +84,7 @@ const RegisterForm = () => {
 
     onClose()
     request()
-  }, [code])
+  }
 
   return (
     <>
@@ -95,7 +104,9 @@ const RegisterForm = () => {
           <StyledLink to='/login'>Войдите</StyledLink>
         </StyledRegisterBlock>
       </StyledLoginForm>
-      <ModelWindowCode isOpen={isOpen} onClose={onClose} setCode={setCode}/>
+      {expirationTime ? <ModelWindowCode isOpen={isOpen} onClose={onClose} onComplete={onCompeleteCode}
+                                         expirationTime={expirationTime}/> : <></>}
+
     </>
   );
 };
