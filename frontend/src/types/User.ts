@@ -7,7 +7,8 @@ export default interface User {
   notifications: {
     time: string
     push: boolean
-    telegram: boolean
+    telegramEnabled: boolean
+    emailEnabled: boolean
     email: string
   }
 }

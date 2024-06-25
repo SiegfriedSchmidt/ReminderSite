@@ -54,12 +54,12 @@ const RegisterForm = () => {
     setUserFields({email, username, password, repeatPassword})
     const rs = await getCode({username, email})
     if (rs.status !== 'success') {
-      errorToast('Код не был отправлен!', 'Попробуйте еще раз!')
+      return errorToast('Код не был отправлен!', 'Попробуйте еще раз!')
     }
     const expirationTime = rs.content.expirationTime
     setExpirationTime(expirationTime)
 
-    return infoToast(`Код отправлен на почту ${email}`, `У вас есть ${expirationTime} секунд, чтобы ввести код!`)
+    infoToast(`Код отправлен на почту ${email}`, `У вас есть ${expirationTime} секунд, чтобы ввести код!`)
   }
 
   function onCompeleteCode(code: string) {
@@ -70,15 +70,7 @@ const RegisterForm = () => {
           return errorToast(data.content.detail, `Попробуйте войти заново!`)
         }
         successToast('Вы успешно зарегистрировались!', `Имя ${userFields.username}`)
-        const {accessToken, refreshToken, isAdmin} = data.content
-        addUser({
-          username: userFields.username,
-          isAdmin,
-          accessToken,
-          refreshToken,
-          email: userFields.email,
-          notifications: {telegram: true, email: userFields.email, push: false, time: '08:00'}
-        })
+        addUser({...data.content})
       }
     }
 

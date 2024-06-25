@@ -26,7 +26,7 @@ interface FormElement extends HTMLFormElement {
 
 const LoginForm = () => {
   const {successToast, errorToast} = useConfiguredToast()
-  const {addUser, user} = useUser()
+  const {addUser} = useUser()
 
   async function onSubmit(e: FormEvent<FormElement>) {
     e.preventDefault();
@@ -43,16 +43,7 @@ const LoginForm = () => {
     }
 
     successToast('Вы успешно вошли в аккаунт!', `Имя ${username}`)
-
-    const {accessToken, refreshToken, email, isAdmin} = data.content
-    addUser({
-      username,
-      isAdmin,
-      accessToken,
-      refreshToken,
-      email,
-      notifications: {telegram: true, email, push: false, time: '08:00'}
-    })
+    addUser({...data.content})
   }
 
   return (

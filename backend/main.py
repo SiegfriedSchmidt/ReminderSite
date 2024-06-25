@@ -66,11 +66,20 @@ async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depen
 
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
+    notifications = user_auth.notifications.get()
     return {
         "accessToken": access_token,
         "refreshToken": refresh_token,
+        "username": user_auth.username,
         "email": user_auth.email,
-        "isAdmin": user_auth.isAdmin
+        "isAdmin": user_auth.isAdmin,
+        "notifications": {
+            "time": notifications.time,
+            "email": notifications.email,
+            "emailEnabled": notifications.emailEnabled,
+            "telegramEnabled": notifications.telegramEnabled,
+            "push": notifications.push,
+        }
     }
 
 
@@ -83,10 +92,25 @@ async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends(
     if selected_user.exists():
         raise HTTPException(status_code=400, detail="Имя пользователя уже занято!")
 
-    User.create(username=user.username, email=user.email, password=user.password, isAdmin=False)
+    user_auth = User.create(username=user.username, email=user.email, password=user.password, isAdmin=False)
+    notifications = Notification.create(time='08:00', email=user_auth.email, emailEnabled=True, telegramId='',
+                                        telegramEnabled=False, push=True, user=user_auth)
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
-    return {"accessToken": access_token, "refreshToken": refresh_token, 'isAdmin': False}
+    return {
+        "accessToken": access_token,
+        "refreshToken": refresh_token,
+        "username": user_auth.username,
+        "email": user_auth.email,
+        "isAdmin": user_auth.isAdmin,
+        "notifications": {
+            "time": notifications.time,
+            "email": notifications.email,
+            "emailEnabled": notifications.emailEnabled,
+            "telegramEnabled": notifications.telegramEnabled,
+            "push": notifications.push,
+        }
+    }
 
 
 @router.post('/getcode')
@@ -155,17 +179,8 @@ async def main():
     server = uvicorn.Server(config)
     setup_peewee_logger()
     setup_uvicorn_logger()
-    print(*User.select(), sep='\n')
     await server.serve()
 
 
 if __name__ == '__main__':
-    # new_user = User(username='bob', email='bob@mail.ru', password='qwerty', isAdmin=False)
-    # new_user.save()
-
-    # fill_json_data('bob')
-
-    # print(User.delete().execute())
-    # print(Event.delete().execute())
-    # print(len([*User.select().where(User.username == 'bob').get().events]))
     asyncio.run(main())
