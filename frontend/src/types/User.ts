@@ -6,7 +6,7 @@ export default interface User {
   refreshToken: string
   notifications: {
     time: string
-    push: boolean
+    pushEnabled: boolean
     telegramEnabled: boolean
     emailEnabled: boolean
     email: string

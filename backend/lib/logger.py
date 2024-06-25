@@ -60,6 +60,10 @@ def setup_uvicorn_logger():
     create_logger("uvicorn.access", f"{Fore.CYAN}FASTAPI")
 
 
+def setup_gmail_api_logger():
+    return create_logger("gmailapi", f"{Fore.YELLOW}GMAIL")
+
+
 logger = create_logger('app', 'APP')
 
 if __name__ == '__main__':

@@ -1,6 +1,8 @@
 import base64
+import logging
 import os.path
 from email.message import EmailMessage
+from logging import Logger
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -15,8 +17,9 @@ class GmailApi:
     SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
               'https://www.googleapis.com/auth/gmail.modify']
 
-    def __init__(self, secret_folder):
+    def __init__(self, secret_folder, logger: Logger):
         self.creds = self.get_cred(secret_folder)
+        self.logger = logger
 
     @staticmethod
     def get_cred(secret_folder: str):
@@ -52,13 +55,13 @@ class GmailApi:
                     .send(userId="me", body=create_message)
                     .execute()
                 )
-                print(f'Message Id: {send_message["id"]}')
+                self.logger.info(f'Message has been sent to "{to}" with id "{send_message["id"]}"')
         except HttpError:
-            print('CREDENTIALS EXPIRED!!!')
+            self.logger.error('CREDENTIALS EXPIRED!!!')
 
 
 def main():
-    gmail_api = GmailApi(secret_folder_path)
+    gmail_api = GmailApi(secret_folder_path, logger=logging.getLogger('gmailapi'))
     gmail_api.send_email('bob-message@mail.ru', "Automated message", "Test 2")
 
 

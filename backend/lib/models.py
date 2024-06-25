@@ -1,7 +1,9 @@
 import peewee
 import json
 
-database = peewee.SqliteDatabase('database.sqlite3', pragmas={'foreign_keys': 1})
+from lib.init import database_path
+
+database = peewee.SqliteDatabase(database_path, pragmas={'foreign_keys': 1})
 
 
 def create_tables():
@@ -9,7 +11,7 @@ def create_tables():
 
 
 def fill_json_data(username: str):
-    with open('test/data.json', 'r') as file:
+    with open('../test/data.json', 'r') as file:
         json_data = json.load(file)
 
     user = User.select().where(User.username == username).get()
@@ -37,8 +39,10 @@ class User(BaseModel):
 class Notification(BaseModel):
     time = peewee.TimeField(formats='%h:%m')
     email = peewee.CharField(max_length=256)
-    telegram = peewee.CharField(max_length=256)
-    push = peewee.BooleanField()
+    telegramId = peewee.CharField(max_length=256)
+    emailEnabled = peewee.BooleanField()
+    telegramEnabled = peewee.BooleanField()
+    pushEnabled = peewee.BooleanField()
     user = peewee.ForeignKeyField(User, backref='notifications')
 
 
@@ -48,3 +52,25 @@ class Event(BaseModel):
     description = peewee.TextField()
     date = peewee.DateField(formats='%d/%m/%Y')
     user = peewee.ForeignKeyField(User, backref='events')
+
+
+if __name__ == '__main__':
+    # new_user = User(username='bob', email='bob@mail.ru', password='qwerty', isAdmin=False)
+    # new_user.save()
+
+    # fill_json_data('bob')
+
+    # print(User.delete().execute())
+    # print(Event.delete().execute())
+    # print(len([*User.select().where(User.username == 'bob').get().events]))
+    # Notification.drop_table()
+    # print(*User.select(), sep='\n')
+    # print(*Notification.select(), sep='\n')
+    # database.drop_tables((User, Event, Notification))
+    # create_tables()
+    notifications = [*Notification.select()]
+    events = [*Event.select()]
+    users = [*User.select()]
+    print(len(notifications), len(events), len(users))
+    print(users)
+    ...

@@ -6,10 +6,14 @@ import SwitchWithText from "../../components/SwitchWithText/SwitchWithText.tsx";
 import AnimatedEditFieldInput from "../../components/EditField/AnimatedEditFieldInput.tsx";
 import useUser from "../../hooks/useUser.tsx";
 import useConfiguredToast from "../../hooks/useConfiguredToast.tsx";
+import updateNotificationTime from "../../api/updateNotificationTime.ts";
+import updateNotificationPush from "../../api/updateNotificationPush.ts";
+import updateNotificationTelegram from "../../api/updateNotificationTelegram.ts";
+import updateNotificationEmail from "../../api/updateNotificationEmail.ts";
 
 const AccountPage = () => {
-  const {user, removeUser} = useUser()
-  const {successToast} = useConfiguredToast()
+  const {user, addUser, removeUser} = useUser()
+  const {successToast, errorToast} = useConfiguredToast()
   const [switchEmail, setSwitchEmail] = useState<boolean>(false);
 
 
@@ -17,32 +21,60 @@ const AccountPage = () => {
     removeUser()
   }
 
-  function onInputTime(time: string) {
-    console.log(time)
-  }
-
-  function onSwitchPush(checked: boolean) {
-    if (checked) {
-      successToast('Всплывающие уведомления включены')
-    } else {
-      successToast('Всплывающие уведомления выключены')
+  async function onInputTime(time: string) {
+    if (user) {
+      const rs = await updateNotificationTime(time)
+      if (rs.status !== "success") {
+        return errorToast("Ошибка", rs.content)
+      }
+      addUser({...user, notifications: {...user.notifications, time}})
+      successToast('Время уведомления изменено')
     }
   }
 
-  function onSwitchTelegram(checked: boolean) {
-    if (checked) {
-      successToast('Уведомления по телеграму включены')
-    } else {
-      successToast('Уведомления по телеграму выключены')
+  async function onSwitchPush(checked: boolean) {
+    if (user) {
+      if (checked) {
+        successToast('Всплывающие уведомления включены')
+      } else {
+        successToast('Всплывающие уведомления выключены')
+      }
+      const rs = await updateNotificationPush(checked)
+      if (rs.status !== "success") {
+        return errorToast("Ошибка", rs.content)
+      }
+      addUser({...user, notifications: {...user.notifications, pushEnabled: checked}})
     }
   }
 
-  function onSwitchEmail(checked: boolean) {
-    setSwitchEmail(checked)
-    if (checked) {
-      successToast('Уведомления по почте включены')
-    } else {
-      successToast('Уведомления по почте выключены')
+  async function onSwitchTelegram(checked: boolean) {
+    if (user) {
+      if (checked) {
+        successToast('Уведомления по телеграму включены')
+      } else {
+        successToast('Уведомления по телеграму выключены')
+      }
+      const rs = await updateNotificationTelegram(checked)
+      if (rs.status !== "success") {
+        return errorToast("Ошибка", rs.content)
+      }
+      addUser({...user, notifications: {...user.notifications, telegramEnabled: checked}})
+    }
+  }
+
+  async function onSwitchEmail(checked: boolean) {
+    if (user) {
+      setSwitchEmail(checked)
+      if (checked) {
+        successToast('Уведомления по почте включены')
+      } else {
+        successToast('Уведомления по почте выключены')
+      }
+      const rs = await updateNotificationEmail(checked)
+      if (rs.status !== "success") {
+        return errorToast("Ошибка", rs.content)
+      }
+      addUser({...user, notifications: {...user.notifications, emailEnabled: checked}})
     }
   }
 
@@ -62,7 +94,7 @@ const AccountPage = () => {
         <SettingsContainer>
           <EditFieldInput type="time" title="Время" defaultValue={user.notifications.time}
                           onBlur={(e) => onInputTime(e.target.value)}/>
-          <SwitchWithText text="Всплывающие уведомления" defaultChecked={user.notifications.push}
+          <SwitchWithText text="Всплывающие уведомления" defaultChecked={user.notifications.pushEnabled}
                           onChange={(e) => onSwitchPush(e.target.checked)}/>
           <SwitchWithText text="Telegram" defaultChecked={user.notifications.telegramEnabled}
                           onChange={(e) => onSwitchTelegram(e.target.checked)}/>

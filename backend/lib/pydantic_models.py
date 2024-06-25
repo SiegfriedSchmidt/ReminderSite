@@ -38,3 +38,15 @@ class CodePydantic(BaseModel):
 
 class EventIdPydantic(BaseModel):
     eventId: int
+
+class NotificationTimePydantic(BaseModel):
+    time: str
+
+class NotificationPushPydantic(BaseModel):
+    pushEnabled: bool
+
+class NotificationEmailPydantic(BaseModel):
+    emailEnabled: bool
+
+class NotificationTelegramPydantic(BaseModel):
+    telegramEnabled: bool
