@@ -4,6 +4,7 @@ from fastapi import HTTPException, Depends, Request, FastAPI, APIRouter
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
+from passlib.context import CryptContext
 from starlette.middleware.cors import CORSMiddleware
 
 from lib.gmail_api import GmailApi
@@ -17,6 +18,7 @@ import uvicorn
 from lib.verification_codes import VerificationCodes
 
 verification_codes = VerificationCodes()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
 gmail_api = GmailApi(secret_folder_path, setup_gmail_api_logger())
 create_tables()
 
@@ -29,6 +31,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password):
+    return pwd_context.hash(password)
 
 
 @AuthJWT.load_config
@@ -61,7 +71,7 @@ async def refresh(Authorize: AuthJWT = Depends()):
 @router.post('/auth/login')
 async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depends()):
     selected_user = User.select().where(User.username == user.username)
-    if not selected_user.exists() or (user_auth := selected_user.get()).password != user.password:
+    if not selected_user.exists() or verify_password(user_auth := selected_user.get().password, user.password):
         raise HTTPException(status_code=400, detail="Bad username or password")
 
     access_token = Authorize.create_access_token(subject=user.username)
@@ -92,7 +102,8 @@ async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends(
     if selected_user.exists():
         raise HTTPException(status_code=400, detail="Имя пользователя уже занято!")
 
-    user_auth = User.create(username=user.username, email=user.email, password=user.password, isAdmin=False)
+    user_auth = User.create(username=user.username, email=user.email, password=get_password_hash(user.password),
+                            isAdmin=False)
     notifications = Notification.create(time='08:00', email=user_auth.email, emailEnabled=True, telegramId='',
                                         telegramEnabled=False, pushEnabled=True, user=user_auth)
     access_token = Authorize.create_access_token(subject=user.username)
@@ -220,6 +231,11 @@ async def notification_telegram(data: NotificationTelegramPydantic, Authorize: A
     notification.telegramEnabled = data.telegramEnabled
     notification.save()
     return "success"
+
+
+@router.post('/internal/get_today_events')
+async def get_today_events(InternalAuthorize: int):
+    ...
 
 
 async def main():
