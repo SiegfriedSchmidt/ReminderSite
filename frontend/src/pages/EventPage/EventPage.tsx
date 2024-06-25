@@ -8,10 +8,14 @@ import {StyledButtonEdit} from "./StyledButtonEdit.tsx";
 import {useParams} from "react-router-dom";
 import {EventsDataContext} from "../../context/EventsDataContext.tsx";
 import getDateForEditField from "../../utils/getDateForEditField.ts";
+import useConfiguredToast from "../../hooks/useConfiguredToast.tsx";
+import addEvent from "../../api/addEvent.ts";
+import updateEvent from "../../api/updateEvent.ts";
 
 const EventPage = () => {
   const {idx} = useParams();
-  const {getOneEvent, eventsData} = useContext(EventsDataContext);
+  const {errorToast, successToast, warningToast} = useConfiguredToast()
+  const {getOneEvent, setOneEvent, eventsData} = useContext(EventsDataContext);
   const eventData = getOneEvent(Number(idx))
   const isNewEvent = eventsData.length.toString() === idx
 
@@ -19,9 +23,33 @@ const EventPage = () => {
   const refDate = useRef<HTMLInputElement>(null)
   const refDescription = useRef<HTMLTextAreaElement>(null)
 
-  function onClickSave() {
+  async function onClickSave() {
     if (refTitle.current && refDate.current && refDescription.current) {
-      console.log(refTitle.current.value, typeof refDate.current.value, refDescription.current.value)
+      const title = refTitle.current.value;
+      const date = refDate.current.valueAsDate;
+      const description = refDescription.current.value;
+      if (!title || !date || !description) {
+        return errorToast('Пустые поля!')
+      }
+      if (isNewEvent) {
+        const rs = await addEvent({title, date: getDateForEditField(date), description})
+        if (rs.status !== 'success') {
+          return errorToast(`${rs.content}`, 'Попробуйте снова!')
+        }
+
+        setOneEvent({title, date, description, until: 0, id: rs.content.id}, Number(idx))
+        successToast('Событие успешно добавлено!')
+      } else if (eventData) {
+        if (title === eventData.title && date.valueOf() === eventData.date.valueOf() && description === eventData.description) {
+          return warningToast('Поля не были изменены!')
+        }
+        const rs = await updateEvent({title, date: getDateForEditField(date), description, id: eventData.id})
+        if (rs.status !== 'success') {
+          return errorToast(`${rs.content}`, 'Попробуйте снова!')
+        }
+        setOneEvent({...eventData, title, date, description}, Number(idx))
+        successToast('Событие успешно изменено!')
+      }
     }
   }
 

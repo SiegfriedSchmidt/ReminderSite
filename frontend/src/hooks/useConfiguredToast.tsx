@@ -33,5 +33,15 @@ export default function useConfiguredToast() {
     })
   }
 
-  return {errorToast, successToast, infoToast}
+  function warningToast(title: string, description?: string) {
+    return toast({
+      title: title,
+      description: description,
+      status: 'warning',
+      duration: 4000,
+      isClosable: true
+    })
+  }
+
+  return {errorToast, successToast, infoToast, warningToast}
 }

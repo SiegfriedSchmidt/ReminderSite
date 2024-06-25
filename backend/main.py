@@ -127,6 +127,7 @@ async def event_add(event: EventWithIdPydantic, Authorize: AuthJWT = Depends()):
     if not selected_event.exists():
         raise HTTPException(status_code=403, detail="Событие отсутствует!")
 
+    selected_event = selected_event.get()
     selected_event.title = event.title
     selected_event.description = event.description
     selected_event.date = event.date

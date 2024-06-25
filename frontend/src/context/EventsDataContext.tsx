@@ -60,7 +60,13 @@ export const EventsDataProvider: FC<EventDataProviderProps> = ({children}) => {
   }, [curSorting]);
 
   function setOneEvent(event: EventData, idx: number) {
-    eventsData[idx] = event
+    event.until = getDaysBetween(new Date(), event.date)
+    if (idx !== eventsData.length) {
+      eventsData[idx] = event
+    } else {
+      eventsData.push(event)
+    }
+
     sortEventsData(eventsData, curSorting)
     setEventsData([...eventsData])
   }

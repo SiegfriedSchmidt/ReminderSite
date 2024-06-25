@@ -15,8 +15,9 @@ function getDayOfYear(date: Date): number {
 export default function getDaysBetween(currentDate: Date, targetDate: Date): number {
   const currentYear = currentDate.getFullYear();
   const targetThisYear = new Date(currentYear, targetDate.getMonth(), targetDate.getDate());
+  const currentDateThisYear = new Date(currentYear, currentDate.getMonth(), currentDate.getDate());
 
-  if (currentDate <= targetThisYear) {
+  if (currentDateThisYear <= targetThisYear) {
     // Target date is later this year or today
     return getDayOfYear(targetThisYear) - getDayOfYear(currentDate);
   } else {

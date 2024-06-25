@@ -1,9 +1,9 @@
 import {api} from "./api.ts";
 import {AxiosError} from "axios";
 
-export default async function addEvent(data: { title: string, description: string, date: string }) {
+export default async function updateEvent(data: { title: string, description: string, date: string, id: string }) {
   try {
-    const rs = await api.post("event/add", data)
+    const rs = await api.post("event/update", data)
     return {
       status: "success",
       content: rs.data
