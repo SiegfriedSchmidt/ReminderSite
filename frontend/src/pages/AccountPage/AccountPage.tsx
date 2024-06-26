@@ -10,6 +10,7 @@ import updateNotificationTime from "../../api/updateNotificationTime.ts";
 import updateNotificationPush from "../../api/updateNotificationPush.ts";
 import updateNotificationTelegram from "../../api/updateNotificationTelegram.ts";
 import updateNotificationEmail from "../../api/updateNotificationEmail.ts";
+import {registerServiceWorker, unregisterServiceWorker} from "../../utils/registerServiceWorker.ts";
 
 const AccountPage = () => {
   const {user, addUser, removeUser} = useUser()
@@ -35,8 +36,11 @@ const AccountPage = () => {
   async function onSwitchPush(checked: boolean) {
     if (user) {
       if (checked) {
+        console.log(1)
+        registerServiceWorker('./assets/service-worker.js')
         successToast('Всплывающие уведомления включены')
       } else {
+        unregisterServiceWorker()
         successToast('Всплывающие уведомления выключены')
       }
       const rs = await updateNotificationPush(checked)
