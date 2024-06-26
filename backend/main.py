@@ -239,7 +239,7 @@ async def notification_telegram(data: NotificationTelegramPydantic, Authorize: A
 
 
 async def verify_internal_token(token: Annotated[str, Header()]):
-    if token == config.jwt_secret_key.get_secret_value():
+    if token == config.internal_token.get_secret_value():
         return {"verified": True}
     else:
         raise HTTPException(status_code=403, detail="INVALID TOKEN")
@@ -280,7 +280,7 @@ async def get_today_events(data: InternalEmailSendPydantic, commons=Depends(veri
 
 async def main():
     app.include_router(router)
-    config = uvicorn.Config(app, host='0.0.0.0', port=8000, log_level="debug", log_config=None)
+    config = uvicorn.Config(app, host='localhost', port=8003, log_level="debug", log_config=None)
     server = uvicorn.Server(config)
     setup_peewee_logger()
     setup_uvicorn_logger()
