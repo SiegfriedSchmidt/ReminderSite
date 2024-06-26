@@ -1,6 +1,7 @@
 from pprint import pprint
 from typing import Annotated
 
+import peewee
 from fastapi import HTTPException, Depends, Request, FastAPI, APIRouter, Header
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
@@ -64,8 +65,11 @@ async def main(request: Request):
 async def refresh(Authorize: AuthJWT = Depends()):
     Authorize.jwt_refresh_token_required()
 
-    current_user = Authorize.get_jwt_subject()
-    new_access_token = Authorize.create_access_token(subject=current_user)
+    current_username = Authorize.get_jwt_subject()
+    if not User.select().where(User.username == current_username).exists():
+        raise HTTPException(status_code=400, detail="Такого пользователя не существует!")
+
+    new_access_token = Authorize.create_access_token(subject=current_username)
     return {"access_token": new_access_token}
 
 
@@ -106,7 +110,7 @@ async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends(
     user_auth = User.create(username=user.username, email=user.email, password=get_password_hash(user.password),
                             isAdmin=False)
     notifications = Notification.create(time='08:00', email=user_auth.email, emailEnabled=True, telegramId='',
-                                        telegramEnabled=False, pushEnabled=True, user=user_auth)
+                                        telegramEnabled=False, pushId='', pushEnabled=True, user=user_auth)
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
     return {
@@ -244,9 +248,27 @@ async def verify_internal_token(token: Annotated[str, Header()]):
 @router.get('/internal/get_today_events')
 async def get_today_events(commons=Depends(verify_internal_token)):
     events = []
-    for event in Event.select():
-        time = Notification.select().join(User).join(Event).where(Event.user == User).get().time
-        events.append({'title': event.title, 'time': time})
+    today = datetime.date.today()
+    current_day = f'{today.day:02}'
+    current_month = f'{today.month:02}'
+    for event in Event.select().where(peewee.fn.strftime('%d', Event.date) == current_day,
+                                      peewee.fn.strftime('%m', Event.date) == current_month):
+        user = event.user.select().get()
+        notifications = user.notifications.get()
+        events.append({
+            'username': user.username,
+            'title': event.title,
+            'date': event.date,
+            'description': event.description,
+            'years': today.year - datetime.datetime.strptime(event.date, '%Y-%m-%d').year,
+            'time': notifications.time,
+            'pushEnabled': notifications.pushEnabled,
+            'emailEnabled': notifications.emailEnabled,
+            'telergamEnabled': notifications.telegramEnabled,
+            'pushId': notifications.pushId,
+            'email': notifications.email,
+            'telergamId': notifications.telegramId
+        })
     return {'events': events}
 
 

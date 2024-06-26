@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from pydantic import BaseModel
 from lib.config_reader import config
 from typing import Any
@@ -34,7 +34,7 @@ class SettingsPydantic(BaseModel):
 
 
 class CodePydantic(BaseModel):
-    creation_time: datetime
+    creation_time: datetime.datetime
     expiration: int
     data: Any
 

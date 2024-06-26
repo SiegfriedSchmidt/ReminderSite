@@ -43,6 +43,7 @@ class Notification(BaseModel):
     time = peewee.TimeField(formats='%h:%m')
     email = peewee.CharField(max_length=256)
     telegramId = peewee.CharField(max_length=256)
+    pushId = peewee.CharField(max_length=256)
     emailEnabled = peewee.BooleanField()
     telegramEnabled = peewee.BooleanField()
     pushEnabled = peewee.BooleanField()
@@ -77,11 +78,26 @@ if __name__ == '__main__':
     print(events)
     print(len(notifications), len(events), len(users))
 
-
     events = []
-    now = datetime.date(2024,6,25)
-    for event in Event.select().where(peewee.fn.date_trunc('month', Event.date) == now):
+    today = datetime.date.today()
+    current_day = f'{today.day:02}'
+    current_month = f'{today.month:02}'
+    for event in Event.select().where(peewee.fn.strftime('%d', Event.date) == current_day,
+                                      peewee.fn.strftime('%m', Event.date) == current_month):
         user = event.user.select().get()
         notifications = user.notifications.get()
-        events.append({'username': user.username, 'title': event.title, 'time': notifications.time})
+        events.append({
+            'username': user.username,
+            'title': event.title,
+            'date': event.date,
+            'description': event.description,
+            'years': today.year - datetime.datetime.strptime(event.date, '%Y-%m-%d').year,
+            'time': notifications.time,
+            'pushEnabled': notifications.pushEnabled,
+            'emailEnabled': notifications.emailEnabled,
+            'telergamEnabled': notifications.telegramEnabled,
+            'pushId': notifications.pushId,
+            'email': notifications.email,
+            'telergamId': notifications.telegramId
+        })
     pprint(events)
