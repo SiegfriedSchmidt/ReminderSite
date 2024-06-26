@@ -1,7 +1,7 @@
 import base64
 import logging
 import os.path
-from email.message import EmailMessage
+from email.mime.text import MIMEText
 from logging import Logger
 
 from google.auth.transport.requests import Request
@@ -41,20 +41,14 @@ class GmailApi:
     def send_email(self, to: str, subject: str, text: str):
         try:
             with build("gmail", "v1", credentials=self.creds) as service:
-                message = EmailMessage()
+                message = MIMEText(text, 'html')
                 message["To"] = to
                 message["From"] = "noreply.reminder.noreply@gmail.com"
                 message["Subject"] = subject
 
-                message.set_content(text)
                 create_message = {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
-                send_message = (
-                    service.users()
-                    .messages()
-                    .send(userId="me", body=create_message)
-                    .execute()
-                )
+                send_message = (service.users().messages().send(userId="me", body=create_message).execute())
                 self.logger.info(f'Message has been sent to "{to}" with id "{send_message["id"]}"')
         except HttpError:
             self.logger.error('CREDENTIALS EXPIRED!!!')

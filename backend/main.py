@@ -272,6 +272,12 @@ async def get_today_events(commons=Depends(verify_internal_token)):
     return {'events': events}
 
 
+@router.post('/internal/send_email_notification')
+async def get_today_events(data: InternalEmailSendPydantic, commons=Depends(verify_internal_token)):
+    gmail_api.send_email(data.email, data.subject, data.content)
+    return {'status': 'success'}
+
+
 async def main():
     app.include_router(router)
     config = uvicorn.Config(app, host='0.0.0.0', port=8000, log_level="debug", log_config=None)

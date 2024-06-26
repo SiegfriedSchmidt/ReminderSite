@@ -61,3 +61,9 @@ class NotificationTelegramPydantic(BaseModel):
 
 class InternalTokenVerifiedPydantic(BaseModel):
     verified: bool
+
+
+class InternalEmailSendPydantic(BaseModel):
+    subject: str
+    content: str
+    email: str
