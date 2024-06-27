@@ -15,6 +15,8 @@ import {
   registerServiceWorker, subscribeNotifications,
   unregisterServiceWorker
 } from "../../utils/pushNotifications.ts";
+import getPushApplicationServerKey from "../../api/getPushApplicationServerKey.ts";
+import sendPushSubscription from "../../api/sendPushSubscription.ts";
 
 const AccountPage = () => {
   const {user, addUser, removeUser} = useUser()
@@ -40,10 +42,25 @@ const AccountPage = () => {
   async function onSwitchPush(checked: boolean) {
     if (user) {
       if (checked) {
-        await registerServiceWorker('./service-worker.js')
-        await getPushPermission()
-        await subscribeNotifications()
-        successToast('Всплывающие уведомления включены')
+        try {
+          let rs = await getPushApplicationServerKey()
+          if (rs.status !== "success") {
+            return errorToast('Ошибка получения ключа для подписки!')
+          }
+          const NOTIFICATION_KEY = rs.content.applicationServerKey
+
+          await registerServiceWorker('./service-worker.js')
+          await getPushPermission()
+          const subscription = await subscribeNotifications(NOTIFICATION_KEY)
+
+          rs = await sendPushSubscription({subscription})
+          if (rs.status !== "success") {
+            return errorToast('Ошибка отправки подписки на сервер!')
+          }
+          successToast('Всплывающие уведомления включены')
+        } catch (error) {
+          return errorToast(`Ошибка подписки на уведомления! ${error}`)
+        }
       } else {
         await unregisterServiceWorker()
         successToast('Всплывающие уведомления выключены')

@@ -59,6 +59,10 @@ class NotificationTelegramPydantic(BaseModel):
     telegramEnabled: bool
 
 
+class NotificationPushSubscriptionPydantic(BaseModel):
+    subscription: str
+
+
 class InternalTokenVerifiedPydantic(BaseModel):
     verified: bool
 
@@ -67,3 +71,9 @@ class InternalEmailSendPydantic(BaseModel):
     subject: str
     content: str
     email: str
+
+
+class InternalSendPushNotificationPydantic(BaseModel):
+    subscription: str
+    title: str
+    body: str

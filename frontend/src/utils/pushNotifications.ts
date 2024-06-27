@@ -1,7 +1,6 @@
 export async function registerServiceWorker(scriptURL: string) {
   const registration = await navigator.serviceWorker.register(scriptURL, {})
   console.log('Service worker has been registered');
-  console.info(registration)
 }
 
 export async function unregisterServiceWorker() {
@@ -31,13 +30,11 @@ function urlBase64ToUint8Array(base64String: string) {
   return Uint8Array.from([...rawData].map((char) => char.charCodeAt(0)));
 }
 
-const NOTIFICATION_KEY = '{{ NOTIFICATION_KEY }}';
-
-export async function subscribeNotifications() {
+export async function subscribeNotifications(NOTIFICATION_KEY: string) {
   const registration = await navigator.serviceWorker.ready
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(NOTIFICATION_KEY)
   })
-  console.log('Subscribed for push:', subscription.endpoint);
+  return JSON.stringify(subscription)
 }

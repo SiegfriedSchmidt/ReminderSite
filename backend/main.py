@@ -1,3 +1,4 @@
+import json
 from pprint import pprint
 from typing import Annotated
 
@@ -8,9 +9,10 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from passlib.context import CryptContext
 from starlette.middleware.cors import CORSMiddleware
+from pywebpush import webpush, WebPushException
 
 from lib.gmail_api import GmailApi
-from lib.init import secret_folder_path, expirationCodeTime
+from lib.init import secret_folder_path, expirationCodeTime, vapid_private_key_path, ADMIN_EMAIL
 from lib.logger import *
 from lib.models import User, Event, Notification, create_tables, fill_json_data
 from lib.pydantic_models import *
@@ -110,7 +112,7 @@ async def register(user: UserRegistrationPydantic, Authorize: AuthJWT = Depends(
     user_auth = User.create(username=user.username, email=user.email, password=get_password_hash(user.password),
                             isAdmin=False)
     notifications = Notification.create(time='08:00', email=user_auth.email, emailEnabled=True, telegramId='',
-                                        telegramEnabled=False, pushId='', pushEnabled=True, user=user_auth)
+                                        telegramEnabled=False, pushSubscription='', pushEnabled=True, user=user_auth)
     access_token = Authorize.create_access_token(subject=user.username)
     refresh_token = Authorize.create_refresh_token(subject=user.username)
     return {
@@ -238,6 +240,23 @@ async def notification_telegram(data: NotificationTelegramPydantic, Authorize: A
     return "success"
 
 
+@router.post('/notification/push_subscription')
+async def push_subscription(data: NotificationPushSubscriptionPydantic, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+
+    current_username = Authorize.get_jwt_subject()
+    notification = User.select().where(User.username == current_username).get().notifications.get()
+    notification.pushSubscription = data.subscription
+    notification.save()
+    return "success"
+
+
+@router.get('/notification/push_application_server_key')
+async def push_application_server_key(Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    return {"applicationServerKey": config.application_server_key.get_secret_value()}
+
+
 async def verify_internal_token(token: Annotated[str, Header()]):
     if token == config.internal_token.get_secret_value():
         return {"verified": True}
@@ -265,7 +284,7 @@ async def get_today_events(commons=Depends(verify_internal_token)):
             'pushEnabled': notifications.pushEnabled,
             'emailEnabled': notifications.emailEnabled,
             'telergamEnabled': notifications.telegramEnabled,
-            'pushId': notifications.pushId,
+            'pushSubscription': notifications.pushSubscription,
             'email': notifications.email,
             'telergamId': notifications.telegramId
         })
@@ -278,9 +297,29 @@ async def get_today_events(data: InternalEmailSendPydantic, commons=Depends(veri
     return {'status': 'success'}
 
 
+@router.post('/internal/send_push_notification')
+async def send_push_notification(data: InternalSendPushNotificationPydantic, commons=Depends(verify_internal_token)):
+    push_data = json.dumps({
+        'title': data.title,
+        'body': data.body
+    })
+    try:
+        webpush(
+            subscription_info=json.loads(data.subscription),
+            data=push_data,
+            vapid_private_key=vapid_private_key_path,
+            vapid_claims={
+                'sub': f'mailto:{ADMIN_EMAIL}'
+            }
+        )
+        return {'status': 'success'}
+    except WebPushException as ex:
+        return {'status': 'error'}
+
+
 async def main():
     app.include_router(router)
-    config = uvicorn.Config(app, host='localhost', port=8003, log_level="debug", log_config=None)
+    config = uvicorn.Config(app, host='192.168.1.1', port=8003, log_level="debug", log_config=None)
     server = uvicorn.Server(config)
     setup_peewee_logger()
     setup_uvicorn_logger()
