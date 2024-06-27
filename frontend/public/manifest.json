@@ -1,0 +1,15 @@
+{
+  "name": "ReminderSite",
+  "short_name": "Reminder",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "App to remind you of your events",
+  "icons": [
+    {
+      "src": "./vite.svg",
+      "sizes": "48x48",
+      "type": "image/svg"
+    }
+  ]
+}

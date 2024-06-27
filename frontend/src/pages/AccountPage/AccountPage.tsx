@@ -10,7 +10,13 @@ import updateNotificationTime from "../../api/updateNotificationTime.ts";
 import updateNotificationPush from "../../api/updateNotificationPush.ts";
 import updateNotificationTelegram from "../../api/updateNotificationTelegram.ts";
 import updateNotificationEmail from "../../api/updateNotificationEmail.ts";
-import {registerServiceWorker, unregisterServiceWorker} from "../../utils/registerServiceWorker.ts";
+import {
+  getPushPermission,
+  registerServiceWorker, subscribeNotifications,
+  unregisterServiceWorker
+} from "../../utils/pushNotifications.ts";
+import getPushApplicationServerKey from "../../api/getPushApplicationServerKey.ts";
+import sendPushSubscription from "../../api/sendPushSubscription.ts";
 
 const AccountPage = () => {
   const {user, addUser, removeUser} = useUser()
@@ -36,11 +42,27 @@ const AccountPage = () => {
   async function onSwitchPush(checked: boolean) {
     if (user) {
       if (checked) {
-        console.log(1)
-        registerServiceWorker('./assets/service-worker.js')
-        successToast('Всплывающие уведомления включены')
+        try {
+          let rs = await getPushApplicationServerKey()
+          if (rs.status !== "success") {
+            return errorToast('Ошибка получения ключа для подписки!')
+          }
+          const NOTIFICATION_KEY = rs.content.applicationServerKey
+
+          await registerServiceWorker('./service-worker.js')
+          await getPushPermission()
+          const subscription = await subscribeNotifications(NOTIFICATION_KEY)
+
+          rs = await sendPushSubscription({subscription})
+          if (rs.status !== "success") {
+            return errorToast('Ошибка отправки подписки на сервер!')
+          }
+          successToast('Всплывающие уведомления включены')
+        } catch (error) {
+          return errorToast(`Ошибка подписки на уведомления! ${error}`)
+        }
       } else {
-        unregisterServiceWorker()
+        await unregisterServiceWorker()
         successToast('Всплывающие уведомления выключены')
       }
       const rs = await updateNotificationPush(checked)

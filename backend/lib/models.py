@@ -43,7 +43,7 @@ class Notification(BaseModel):
     time = peewee.TimeField(formats='%h:%m')
     email = peewee.CharField(max_length=256)
     telegramId = peewee.CharField(max_length=256)
-    pushId = peewee.CharField(max_length=256)
+    pushSubscription = peewee.CharField(max_length=512)
     emailEnabled = peewee.BooleanField()
     telegramEnabled = peewee.BooleanField()
     pushEnabled = peewee.BooleanField()
@@ -75,6 +75,8 @@ if __name__ == '__main__':
     notifications = [*Notification.select()]
     events = [*Event.select()]
     users = [*User.select()]
+    print(users)
+    print(notifications)
     print(events)
     print(len(notifications), len(events), len(users))
 

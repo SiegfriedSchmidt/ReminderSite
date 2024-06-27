@@ -13,6 +13,10 @@ from googleapiclient.errors import HttpError
 from lib.init import secret_folder_path
 
 
+class GmailApiException(BaseException):
+    pass
+
+
 class GmailApi:
     SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
               'https://www.googleapis.com/auth/gmail.modify']
@@ -52,6 +56,7 @@ class GmailApi:
                 self.logger.info(f'Message has been sent to "{to}" with id "{send_message["id"]}"')
         except HttpError:
             self.logger.error('CREDENTIALS EXPIRED!!!')
+            raise GmailApiException
 
 
 def main():
