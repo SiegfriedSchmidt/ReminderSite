@@ -11,7 +11,7 @@ from passlib.context import CryptContext
 from starlette.middleware.cors import CORSMiddleware
 from pywebpush import webpush, WebPushException
 
-from lib.gmail_api import GmailApi
+from lib.gmail_api import GmailApi, GmailApiException
 from lib.init import secret_folder_path, expirationCodeTime, vapid_private_key_path, ADMIN_EMAIL
 from lib.logger import *
 from lib.models import User, Event, Notification, create_tables, fill_json_data
@@ -292,21 +292,23 @@ async def get_today_events(commons=Depends(verify_internal_token)):
 
 
 @router.post('/internal/send_email_notification')
-async def get_today_events(data: InternalEmailSendPydantic, commons=Depends(verify_internal_token)):
-    gmail_api.send_email(data.email, data.subject, data.content)
-    return {'status': 'success'}
+async def send_email_notification(data: InternalEmailSendPydantic, commons=Depends(verify_internal_token)):
+    try:
+        gmail_api.send_email(data.email, data.subject, data.content)
+        return {'status': 'success'}
+    except GmailApiException:
+        return {'status': 'error'}
 
 
 @router.post('/internal/send_push_notification')
 async def send_push_notification(data: InternalSendPushNotificationPydantic, commons=Depends(verify_internal_token)):
-    push_data = json.dumps({
-        'title': data.title,
-        'body': data.body
-    })
     try:
         webpush(
-            subscription_info=json.loads(data.subscription),
-            data=push_data,
+            subscription_info=json.loads(data.pushSubscription),
+            data=json.dumps({
+                'title': data.title,
+                'body': data.body
+            }),
             vapid_private_key=vapid_private_key_path,
             vapid_claims={
                 'sub': f'mailto:{ADMIN_EMAIL}'
@@ -315,6 +317,18 @@ async def send_push_notification(data: InternalSendPushNotificationPydantic, com
         return {'status': 'success'}
     except WebPushException as ex:
         return {'status': 'error'}
+
+
+@router.post('/internal/login_with_telegramId')
+async def login_with_telegramId(data: InternalUserWithTelegramId, commons=Depends(verify_internal_token)):
+    selected_user = User.select().where(User.username == data.username)
+    if not selected_user.exists() or not verify_password(data.password, (user_auth := selected_user.get()).password):
+        return {'status': 'error'}
+
+    notification = user_auth.notifications.get()
+    notification.telegramId = data.telegramId
+    notification.save()
+    return {'status': 'success'}
 
 
 async def main():

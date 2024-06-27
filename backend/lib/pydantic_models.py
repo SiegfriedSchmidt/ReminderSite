@@ -1,7 +1,7 @@
 import datetime
 from pydantic import BaseModel
 from lib.config_reader import config
-from typing import Any
+from typing import Any, List
 
 
 class UserPydantic(BaseModel):
@@ -74,6 +74,12 @@ class InternalEmailSendPydantic(BaseModel):
 
 
 class InternalSendPushNotificationPydantic(BaseModel):
-    subscription: str
+    pushSubscription: str
     title: str
     body: str
+
+
+class InternalUserWithTelegramId(BaseModel):
+    username: str
+    password: str
+    telegramId: str
