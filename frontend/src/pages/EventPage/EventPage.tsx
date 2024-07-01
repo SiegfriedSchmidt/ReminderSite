@@ -39,7 +39,7 @@ const EventPage = () => {
       if (isNewEvent) {
         const rs = await addEvent({title, date: getDateForEditField(date), description})
         if (rs.status !== 'success') {
-          return errorToast(`${rs.content}`, 'Попробуйте снова!')
+          return errorToast(rs.content, 'Попробуйте снова!')
         }
 
         setOneEvent({title, date, description, until: 0, id: rs.content.id}, Number(idx))
@@ -51,7 +51,7 @@ const EventPage = () => {
         }
         const rs = await updateEvent({title, date: getDateForEditField(date), description, id: eventData.id})
         if (rs.status !== 'success') {
-          return errorToast(`${rs.content}`, 'Попробуйте снова!')
+          return errorToast(rs.content, 'Попробуйте снова!')
         }
         setOneEvent({...eventData, title, date, description}, Number(idx))
         successToast('Событие успешно изменено!')
@@ -65,7 +65,7 @@ const EventPage = () => {
     if (proceed && idx && eventData) {
       const rs = await deleteEvent(eventData.id)
       if (rs.status !== 'success') {
-        return errorToast(`${rs.content}`, 'Попробуйте снова!')
+        return errorToast(rs.content, 'Попробуйте снова!')
       }
       deleteOneEvent(Number(idx))
       successToast('Событие успешно удалено!')

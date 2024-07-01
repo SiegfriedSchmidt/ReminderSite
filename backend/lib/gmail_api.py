@@ -1,5 +1,4 @@
 import base64
-import logging
 import os.path
 from email.mime.text import MIMEText
 from logging import Logger
@@ -9,8 +8,6 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
-from lib.init import secret_folder_path
 
 
 class GmailApiException(BaseException):
@@ -57,12 +54,3 @@ class GmailApi:
         except HttpError:
             self.logger.error('CREDENTIALS EXPIRED!!!')
             raise GmailApiException
-
-
-def main():
-    gmail_api = GmailApi(secret_folder_path, logger=logging.getLogger('gmailapi'))
-    gmail_api.send_email('bob-message@mail.ru', "Automated message", "Test 2")
-
-
-if __name__ == '__main__':
-    main()

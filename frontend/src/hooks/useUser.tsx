@@ -7,12 +7,12 @@ export default function useUser() {
 
   function addUser(user: User) {
     setUser(user);
-    sessionStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
   }
 
   function removeUser() {
     setUser(null)
-    sessionStorage.removeItem("user")
+    localStorage.removeItem("user")
   }
 
   return {user, addUser, removeUser};

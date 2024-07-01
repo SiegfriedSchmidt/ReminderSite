@@ -10,10 +10,9 @@ import FormField from "../FormField/FormField.tsx";
 import loginIcon from "../../assets/login_icon.svg"
 import lockIcon from "../../assets/lock_icon.svg"
 import login from "../../api/login.ts";
-import {ChakraProvider, useToast} from "@chakra-ui/react";
 import useUser from "../../hooks/useUser.tsx";
-import {useNavigate} from "react-router-dom";
 import useConfiguredToast from "../../hooks/useConfiguredToast.tsx";
+import useUserSettings from "../../hooks/useUserSettings.tsx";
 
 interface FormElements extends HTMLFormControlsCollection {
   username: HTMLInputElement
@@ -27,23 +26,26 @@ interface FormElement extends HTMLFormElement {
 const LoginForm = () => {
   const {successToast, errorToast} = useConfiguredToast()
   const {addUser} = useUser()
+  const {addUserSettings} = useUserSettings()
 
   async function onSubmit(e: FormEvent<FormElement>) {
     e.preventDefault();
     const username = e.currentTarget.elements.username.value;
     const password = e.currentTarget.elements.password.value;
-    const data = await login({username, password})
 
     if (!username || !password) {
       return errorToast('Пустые поля!', `Попробуйте войти заново!`)
     }
 
-    if (data.status !== 'success') {
-      return errorToast('Неверное имя или пароль!', `Попробуйте войти заново!`)
+    const rs = await login({username, password})
+
+    if (rs.status !== 'success') {
+      return errorToast(rs.content, `Попробуйте войти заново!`)
     }
 
     successToast('Вы успешно вошли в аккаунт!', `Имя ${username}`)
-    addUser({...data.content})
+    addUser({...rs.content.user})
+    addUserSettings({...rs.content.userSettings})
   }
 
   return (
