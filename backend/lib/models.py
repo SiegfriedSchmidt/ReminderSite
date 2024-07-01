@@ -57,10 +57,10 @@ if __name__ == '__main__':
     events = [*Event.select()]
     users = [*User.select()]
     subscriptions = [sub.pushSubscription for sub in Subscription.select(Subscription.pushSubscription)]
-    # print(users)
-    # print(userSettings)
     # print(events)
-    print(*subscriptions, sep='\n')
+    # print(userSettings)
+    # print([*UserSettings.select()])
+    # print(*subscriptions, sep='\n')
     # print(len(userSettings), len(events), len(users))
 
     events = []

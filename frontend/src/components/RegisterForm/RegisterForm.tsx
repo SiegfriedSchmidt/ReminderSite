@@ -64,7 +64,7 @@ const RegisterForm = () => {
     infoToast(`Код отправлен на почту ${email}`, `У вас есть ${expirationTime} секунд, чтобы ввести код!`)
   }
 
-  function onCompeleteCode(code: string) {
+  function onCompleteCode(code: string) {
     async function request() {
       if (userFields) {
         const rs = await register({...userFields, code})
@@ -99,7 +99,7 @@ const RegisterForm = () => {
           <StyledLink to='/login'>Войдите</StyledLink>
         </StyledRegisterBlock>
       </StyledLoginForm>
-      {expirationTime ? <ModelWindowCode isOpen={isOpen} onClose={onClose} onComplete={onCompeleteCode}
+      {expirationTime ? <ModelWindowCode isOpen={isOpen} onClose={onClose} onComplete={onCompleteCode}
                                          expirationTime={expirationTime}/> : <></>}
 
     </>

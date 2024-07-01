@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import {textStyle} from "../../styles/Styles.tsx";
-import {Button} from "@chakra-ui/react";
 import {StyledFormButton} from "../../components/LoginForm/StyledLoginform.tsx";
 
 export const Container = styled.div`
