@@ -1,5 +1,10 @@
 export async function registerServiceWorker(scriptURL: string) {
-  const registration = await navigator.serviceWorker.register(scriptURL, {})
+  const registrations = await navigator.serviceWorker.getRegistrations()
+  if (registrations.length > 0) {
+    console.log('Service worker is already registered')
+    return
+  }
+  await navigator.serviceWorker.register(scriptURL, {})
   console.log('Service worker has been registered');
 }
 

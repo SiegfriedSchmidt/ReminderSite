@@ -2,25 +2,13 @@ import datetime
 from pprint import pprint
 
 import peewee
-import json
-
 from lib.init import database_path
 
 database = peewee.SqliteDatabase(database_path, pragmas={'foreign_keys': 1})
 
 
 def create_tables():
-    database.create_tables([User, Notification, Event])
-
-
-def fill_json_data(username: str):
-    with open('../test/data.json', 'r') as file:
-        json_data = json.load(file)
-
-    user = User.select().where(User.username == username).get()
-    with database.atomic():
-        for data_dict in json_data:
-            Event.create(**data_dict, description='', user=user)
+    database.create_tables([User, UserSettings, Event, Subscription])
 
 
 class BaseModel(peewee.Model):
@@ -39,15 +27,19 @@ class User(BaseModel):
     isAdmin = peewee.BooleanField()
 
 
-class Notification(BaseModel):
-    time = peewee.TimeField(formats='%h:%m')
-    email = peewee.CharField(max_length=256)
+class UserSettings(BaseModel):
+    timeNotification = peewee.TimeField(formats='%h:%m')
+    emailNotification = peewee.CharField(max_length=256)
     telegramId = peewee.CharField(max_length=256)
-    pushSubscription = peewee.CharField(max_length=512)
     emailEnabled = peewee.BooleanField()
     telegramEnabled = peewee.BooleanField()
     pushEnabled = peewee.BooleanField()
-    user = peewee.ForeignKeyField(User, backref='notifications')
+    user = peewee.ForeignKeyField(User, backref='userSettings')
+
+
+class Subscription(BaseModel):
+    pushSubscription = peewee.CharField(max_length=512, unique=True)
+    user = peewee.ForeignKeyField(User, backref='subscriptions')
 
 
 class Event(BaseModel):
@@ -59,26 +51,17 @@ class Event(BaseModel):
 
 
 if __name__ == '__main__':
-    # new_user = User(username='bob', email='bob@mail.ru', password='qwerty', isAdmin=False)
-    # new_user.save()
-
-    # fill_json_data('bob')
-
-    # print(User.delete().execute())
-    # print(Event.delete().execute())
-    # print(len([*User.select().where(User.username == 'bob').get().events]))
-    # Notification.drop_table()
-    # print(*User.select(), sep='\n')
-    # print(*Notification.select(), sep='\n')
-    # database.drop_tables((User, Event, Notification))
+    # database.drop_tables((User, Event, UserSettings, Subscription))
     # create_tables()
-    notifications = [*Notification.select()]
+    userSettings = [*UserSettings.select()]
     events = [*Event.select()]
     users = [*User.select()]
-    print(users)
-    print(notifications)
-    print(events)
-    print(len(notifications), len(events), len(users))
+    subscriptions = [sub.pushSubscription for sub in Subscription.select(Subscription.pushSubscription)]
+    # print(users)
+    # print(userSettings)
+    # print(events)
+    print(*subscriptions, sep='\n')
+    # print(len(userSettings), len(events), len(users))
 
     events = []
     today = datetime.date.today()
@@ -87,19 +70,20 @@ if __name__ == '__main__':
     for event in Event.select().where(peewee.fn.strftime('%d', Event.date) == current_day,
                                       peewee.fn.strftime('%m', Event.date) == current_month):
         user = event.user.select().get()
-        notifications = user.notifications.get()
+        userSettings = user.userSettings.get()
+        pushSubscriptions = [sub.pushSubscription for sub in user.subscriptions.select(Subscription.pushSubscription)]
         events.append({
             'username': user.username,
             'title': event.title,
             'date': event.date,
             'description': event.description,
             'years': today.year - datetime.datetime.strptime(event.date, '%Y-%m-%d').year,
-            'time': notifications.time,
-            'pushEnabled': notifications.pushEnabled,
-            'emailEnabled': notifications.emailEnabled,
-            'telergamEnabled': notifications.telegramEnabled,
-            'pushId': notifications.pushId,
-            'email': notifications.email,
-            'telergamId': notifications.telegramId
+            'timeNotification': userSettings.timeNotification,
+            'pushEnabled': userSettings.pushEnabled,
+            'emailEnabled': userSettings.emailEnabled,
+            'telergamEnabled': userSettings.telegramEnabled,
+            'emailNotification': userSettings.emailNotification,
+            'telergamId': userSettings.telegramId,
+            'pushSubscriptions': pushSubscriptions,
         })
     pprint(events)

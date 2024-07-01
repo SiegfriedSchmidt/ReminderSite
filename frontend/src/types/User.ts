@@ -4,11 +4,4 @@ export default interface User {
   isAdmin: boolean
   accessToken: string
   refreshToken: string
-  notifications: {
-    time: string
-    pushEnabled: boolean
-    telegramEnabled: boolean
-    emailEnabled: boolean
-    email: string
-  }
 }

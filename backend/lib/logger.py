@@ -52,7 +52,7 @@ def create_logger(name: str, app_name: str):
 
 
 def setup_peewee_logger():
-    create_logger('peewee', f"{Fore.MAGENTA}SQL")
+    create_logger('peewee', f"{Fore.MAGENTA}SQL    ")
 
 
 def setup_uvicorn_logger():
@@ -61,10 +61,10 @@ def setup_uvicorn_logger():
 
 
 def setup_gmail_api_logger():
-    return create_logger("gmailapi", f"{Fore.YELLOW}GMAIL")
+    return create_logger("gmailapi", f"{Fore.YELLOW}GMAIL  ")
 
 
-logger = create_logger('app', 'APP')
+logger = create_logger('app', f'{Fore.MAGENTA}LOGGER ')
 
 if __name__ == '__main__':
     pass

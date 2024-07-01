@@ -1,18 +1,23 @@
-from lib.generate_code import generate_code
+from pydantic import BaseModel
+from lib.utils.generate_code import generate_code
+from typing import Dict, Any
 from datetime import datetime
-from typing import Dict
 
-from lib.init import expirationCodeTime
-from lib.pydantic_models import CodePydantic
+
+class CodePydantic(BaseModel):
+    creation_time: datetime
+    expiration: int
+    data: Any
 
 
 class VerificationCodes:
-    def __init__(self):
+    def __init__(self, expiration_code_time):
         self.codes: Dict[str, CodePydantic] = {}
+        self.expiration_code_time = expiration_code_time
 
     def add_data_with_code(self, data):
         code = generate_code()
-        self.codes[code] = CodePydantic(creation_time=datetime.now(), expiration=expirationCodeTime, data=data)
+        self.codes[code] = CodePydantic(creation_time=datetime.now(), expiration=self.expiration_code_time, data=data)
         return code
 
     def verify_code(self, code):

@@ -11,6 +11,7 @@ import register from "../../api/register.ts";
 import ModelWindowCode from "../ModelWindowCode/ModelWindowCode.tsx";
 import getCode from "../../api/getCode.ts";
 import useConfiguredToast from "../../hooks/useConfiguredToast.tsx";
+import useUserSettings from "../../hooks/useUserSettings.tsx";
 
 interface FormElements extends HTMLFormControlsCollection {
   email: HTMLInputElement
@@ -27,6 +28,7 @@ const RegisterForm = () => {
   const {successToast, errorToast, infoToast} = useConfiguredToast()
   const {isOpen, onOpen, onClose} = useDisclosure()
   const {addUser} = useUser()
+  const {addUserSettings} = useUserSettings()
   const [expirationTime, setExpirationTime] = useState<number | null>(null)
   const [userFields, setUserFields] = useState<{
     email: string,
@@ -65,12 +67,13 @@ const RegisterForm = () => {
   function onCompeleteCode(code: string) {
     async function request() {
       if (userFields) {
-        const data = await register({...userFields, code})
-        if (data.status !== 'success') {
-          return errorToast(data.content.detail, `Попробуйте войти заново!`)
+        const rs = await register({...userFields, code})
+        if (rs.status !== 'success') {
+          return errorToast(rs.content, `Попробуйте войти заново!`)
         }
         successToast('Вы успешно зарегистрировались!', `Имя ${userFields.username}`)
-        addUser({...data.content})
+        addUser({...rs.content.user})
+        addUserSettings({...rs.content.userSettings})
       }
     }
 
