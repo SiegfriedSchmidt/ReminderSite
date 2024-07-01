@@ -36,15 +36,22 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-def setup_basic_logger():
+def create_logger(name: str, app_name: str):
     colorama.init()
+
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
 
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
 
-    ch.setFormatter(CustomFormatter(f"{Fore.CYAN}AIOGRAM"))
-    logging.basicConfig(level=logging.DEBUG, handlers=[ch])
+    ch.setFormatter(CustomFormatter(app_name))
 
+    logger.addHandler(ch)
+    return logger
+
+
+logger = create_logger('app', f'{Fore.MAGENTA}LOGGER')
 
 if __name__ == '__main__':
     pass
