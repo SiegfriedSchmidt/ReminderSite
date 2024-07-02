@@ -1,0 +1,7 @@
+.idea
+test
+certs
+dist
+node_modules
+Dockerfile
+.dockerignore

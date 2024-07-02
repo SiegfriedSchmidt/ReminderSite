@@ -6,12 +6,17 @@ from lib.verification_codes import VerificationCodes
 # from lib.gmail_api import GmailApi
 # from lib.logger import setup_gmail_api_logger
 
-secret_folder_path = os.environ.get("SECRET_FOLDER_PATH", Path(__file__).parent.parent.parent.absolute() / 'secret')
-database_path = os.environ.get("DATABASE_FOLDER_PATH", Path(__file__).parent.parent.absolute() / 'database.sqlite3')
-expiration_code_time = os.environ.get("EXPIRATION_CODE_TIME", 40)
+secret_folder_path = Path(
+    os.environ.get("SECRET_FOLDER_PATH", Path(__file__).parent.parent.parent.absolute() / 'secret')
+)
+database_path = Path(
+    os.environ.get("DATABASE_FOLDER_PATH", Path(__file__).parent.parent.absolute())
+) / 'database.sqlite3'
+
+expiration_code_time = int(os.environ.get("EXPIRATION_CODE_TIME", 40))
 admin_email = os.environ.get("ADMIN_EMAIL", 'admin@mail.ru')
 server_host = os.environ.get("HOST", "192.168.1.15")
-server_port = os.environ.get("PORT", 8003)
+server_port = int(os.environ.get("PORT", 8001))
 
 vapid_private_key_path = secret_folder_path / 'private_key.pem'
 verification_codes = VerificationCodes(expiration_code_time)

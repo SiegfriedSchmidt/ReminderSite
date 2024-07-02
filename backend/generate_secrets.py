@@ -8,13 +8,13 @@ def generate_secret():
 
 
 def generate_webpush_keys():
-    process = subprocess.Popen(['./venv/bin/vapid', '--applicationServerKey'], shell=True, stdin=subprocess.PIPE,
+    process = subprocess.Popen(['vapid', '--applicationServerKey'], shell=True, stdin=subprocess.PIPE,
                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     process.communicate(b'Y\n')
     process.wait()
     process.kill()
 
-    output = subprocess.run(['./venv/bin/vapid', '--applicationServerKey'], stdout=subprocess.PIPE).stdout.decode()
+    output = subprocess.run(['vapid', '--applicationServerKey'], stdout=subprocess.PIPE).stdout.decode()
     return output.split()[-1].strip()
 
 
@@ -24,7 +24,7 @@ def mv_pem_keys(secret_folder_path):
 
 
 def main():
-    secret_folder_path = os.environ.get("SECRET_FOLDER_PATH", Path(__file__).parent.parent.absolute() / 'secret')
+    secret_folder_path = Path(os.environ.get("SECRET_FOLDER_PATH", Path(__file__).parent.parent.absolute() / 'secret'))
     env_file_path = secret_folder_path / '.env'
     pem_private_key_path = secret_folder_path / 'private_key.pem'
     pem_public_key_path = secret_folder_path / 'public_key.pem'

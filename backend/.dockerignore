@@ -1,0 +1,7 @@
+.venv
+venv
+.idea
+*.sqlite3
+test
+Dockerfile
+.dockerignore

@@ -1,0 +1,41 @@
+services:
+  frontend:
+    build: ./frontend
+    container_name: reminder-frontend
+    ports:
+      - "8080:80"
+  backend:
+    build: ./backend
+    container_name: reminder-backend
+    environment:
+      - SECRET_FOLDER_PATH=/reminder-data/secret
+      - DATABASE_FOLDER_PATH=/reminder-data
+      - EXPIRATION_CODE_TIME=40
+      - ADMIN_EMAIL=admin@mail.ru
+      - HOST=0.0.0.0
+      - PORT=8001
+    expose: 
+      - "8001"
+    volumes:
+      - /Users/matvei/Developer/Projects/ReminderSite/reminder-data:/reminder-data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8001/api/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      start_interval: 5s
+      retries: 5
+  cron:
+    build: ./cron
+    container_name: reminder-cron
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - API_HOST=backend
+      - API_PORT=8001
+      - REGISTER_EVENTS_TIME=08:00
+      - DISABLE_NOTIFICATION_TIMEOUT=10
+      - SECRET_FOLDER_PATH=/reminder-data/secret
+    volumes:
+      - /Users/matvei/Developer/Projects/ReminderSite/reminder-data:/reminder-data
