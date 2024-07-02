@@ -8,7 +8,7 @@ import json
 
 from lib.config_reader import config
 from lib.gmail_api import GmailApiException
-from lib.init import gmail_api, vapid_private_key_path, ADMIN_EMAIL, verify_password
+from lib.init import vapid_private_key_path, admin_email, verify_password
 from lib.models import User, Event, Subscription
 
 router = APIRouter(prefix='/internal')
@@ -58,7 +58,7 @@ class InternalEmailSendPydantic(BaseModel):
 @router.post('/send_email_notification')
 async def send_email_notification(data: InternalEmailSendPydantic, commons=Depends(verify_internal_token)):
     try:
-        gmail_api.send_email(data.email, data.subject, data.content)
+        # gmail_api.send_email(data.email, data.subject, data.content)
         return {'status': 'success'}
     except GmailApiException:
         return {'status': 'error'}
@@ -82,7 +82,7 @@ async def send_push_notifications(data: InternalSendPushNotificationPydantic, co
                 }),
                 vapid_private_key=vapid_private_key_path,
                 vapid_claims={
-                    'sub': f'mailto:{ADMIN_EMAIL}'
+                    'sub': f'mailto:{admin_email}'
                 }
             )
         return {'status': 'success'}

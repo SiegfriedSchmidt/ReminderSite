@@ -33,8 +33,8 @@ const EventPage = () => {
       const title = refTitle.current.value;
       const date = refDate.current.valueAsDate;
       const description = refDescription.current.value;
-      if (!title || !date || !description) {
-        return errorToast('Пустые поля!')
+      if (!title || !date) {
+        return errorToast('Введите название события!')
       }
       if (isNewEvent) {
         const rs = await addEvent({title, date: getDateForEditField(date), description})

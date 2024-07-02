@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from lib.config_reader import config
+from lib.init import server_host, server_port
 from lib.logger import setup_uvicorn_logger, setup_peewee_logger
 from lib.logger import logger
 
@@ -62,7 +63,7 @@ async def main():
     setup_uvicorn_logger()
 
     app.include_router(main_router)
-    config = uvicorn.Config(app, host='192.168.1.1', port=8003, log_level="debug", log_config=None)
+    config = uvicorn.Config(app, host=server_host, port=server_port, log_level="debug", log_config=None)
     server = uvicorn.Server(config)
 
     await server.serve()
