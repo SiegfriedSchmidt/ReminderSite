@@ -2,9 +2,10 @@ from typing import List
 
 import requests
 from config_reader import config
+from init import api_host, api_port
 
 headers = {'token': config.internal_token.get_secret_value()}
-base_path = 'http://192.168.1.1:8003/api/internal'
+base_path = f'http://{api_host}:{api_port}/api/internal'
 
 
 def get_today_events():

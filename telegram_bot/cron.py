@@ -3,6 +3,7 @@ import schedule
 from datetime import datetime
 from typing import List
 from api import send_push_notifications, get_today_events
+from init import register_events_time, disable_notification_timout
 from logger import logger
 
 
@@ -16,13 +17,13 @@ def get_seconds(time: datetime):
     return (time - time.replace(hour=0, minute=0, second=0, microsecond=0)).total_seconds()
 
 
-def register_all_jobs(disable_timeout=10):
+def register_all_jobs():
     logger.info('Registering all events')
     events = get_today_events()
     for event in events:
         seconds_event = get_seconds(datetime.strptime(event['timeNotification'], '%H:%M'))
         seconds_now = get_seconds(datetime.now())
-        if event['pushEnabled'] and seconds_event - seconds_now > disable_timeout:
+        if event['pushEnabled'] and seconds_event - seconds_now > disable_notification_timout:
             logger.info(f"Event at {event['timeNotification']} scheduled")
             schedule.every().day.at(event['timeNotification']).do(
                 send_push,
@@ -32,7 +33,7 @@ def register_all_jobs(disable_timeout=10):
 
 def main():
     register_all_jobs()
-    schedule.every().day.at('22:45').do(register_all_jobs)
+    schedule.every().day.at(register_events_time).do(register_all_jobs)
     logger.info(f'Schedule registering all events (next_run: {schedule.get_jobs()[0].next_run})')
     while True:
         schedule.run_pending()
