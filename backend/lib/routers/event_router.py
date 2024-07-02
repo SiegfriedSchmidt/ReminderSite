@@ -49,7 +49,8 @@ async def event_update(event: EventWithIdPydantic, Authorize: AuthJWT = Depends(
     Authorize.jwt_required()
     current_username = Authorize.get_jwt_subject()
 
-    selected_event = Event.select().join(User).where(Event.id == event.id & User.username == current_username)
+    current_user = User.select().where(User.username == current_username)
+    selected_event = Event.select().join(User).where(Event.id == event.id & Event.user == current_user)
     if not selected_event.exists():
         return {'status': 'error', 'content': "Событие отсутствует!"}
 
@@ -70,7 +71,8 @@ async def event_delete(data: EventIdPydantic, Authorize: AuthJWT = Depends()):
     Authorize.jwt_required()
     current_username = Authorize.get_jwt_subject()
 
-    selected_event = Event.select().join(User).where(Event.id == data.eventId & User.username == current_username)
+    current_user = User.select().where(User.username == current_username)
+    selected_event = Event.select().join(User).where(Event.id == data.eventId & Event.user == current_user)
     if not selected_event.exists():
         return {'status': 'error', 'content': "Событие отсутствует!"}
 

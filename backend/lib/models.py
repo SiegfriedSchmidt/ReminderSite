@@ -50,6 +50,7 @@ class Event(BaseModel):
     user = peewee.ForeignKeyField(User, backref='events')
 
 
+create_tables()
 if __name__ == '__main__':
     # database.drop_tables((User, Event, UserSettings, Subscription))
     # create_tables()
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     events = [*Event.select()]
     users = [*User.select()]
     subscriptions = [sub.pushSubscription for sub in Subscription.select(Subscription.pushSubscription)]
-    # print(events)
+    print(events)
     # print(userSettings)
     # print([*UserSettings.select()])
     # print(*subscriptions, sep='\n')
