@@ -1,11 +1,15 @@
 services:
   frontend:
+    #platform: linux/amd64
     build: ./frontend
+    image: siegfriedschmidt/reminder-frontend
     container_name: reminder-frontend
     ports:
       - "8080:80"
   backend:
+    #platform: linux/amd64
     build: ./backend
+    image: siegfriedschmidt/reminder-backend
     container_name: reminder-backend
     environment:
       - SECRET_FOLDER_PATH=/reminder-data/secret
@@ -23,10 +27,12 @@ services:
       interval: 30s
       timeout: 10s
       start_period: 10s
-      start_interval: 5s
+      #start_interval: 5s
       retries: 5
   cron:
+    #platform: linux/amd64
     build: ./cron
+    image: siegfriedschmidt/reminder-cron
     container_name: reminder-cron
     depends_on:
       backend:

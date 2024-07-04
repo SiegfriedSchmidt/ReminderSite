@@ -8,12 +8,7 @@ def generate_secret():
 
 
 def generate_webpush_keys():
-    process = subprocess.Popen(['vapid', '--applicationServerKey'], shell=True, stdin=subprocess.PIPE,
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    process.communicate(b'Y\n')
-    process.wait()
-    process.kill()
-
+    subprocess.run(['vapid', '--gen'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     output = subprocess.run(['vapid', '--applicationServerKey'], stdout=subprocess.PIPE).stdout.decode()
     return output.split()[-1].strip()
 

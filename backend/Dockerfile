@@ -24,7 +24,8 @@ COPY --from=builder /app/wheels /wheels
 RUN pip install --no-cache /wheels/*
 
 RUN addgroup --gid 1001 --system app && \
-    adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group app
+    adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group app && \
+    chown -R 1001:1001 /app
 
 USER app
 
