@@ -63,7 +63,7 @@ async def main():
     setup_uvicorn_logger()
 
     app.include_router(main_router)
-    config = uvicorn.Config(app, host=server_host, port=server_port, log_level="debug", log_config=None)
+    config = uvicorn.Config(app, host=server_host, port=server_port, log_level="debug", log_config=None, workers=1)
     server = uvicorn.Server(config)
 
     await server.serve()

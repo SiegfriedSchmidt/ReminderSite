@@ -1,15 +1,32 @@
-FROM python:3.10.9-alpine
-COPY requirements.txt /
-RUN apk add gcc libc-dev libffi-dev && \
-    apk add openssl && \
-    apk add curl
-RUN pip install -r requirements.txt
+FROM python:3.10.9-slim as builder
+
+WORKDIR /app
+
 ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PIP_DEFAULT_TIMEOUT=100
+    PYTHONDONTWRITEBYTECODE=1
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc
+
+COPY requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+
+FROM python:3.10.9-slim
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends openssl curl
+
+COPY --from=builder /app/wheels /wheels
+RUN pip install --no-cache /wheels/*
+
+RUN addgroup --gid 1001 --system app && \
+    adduser --no-create-home --shell /bin/false --disabled-password --uid 1001 --system --group app
+
+USER app
 
 COPY . /app
-WORKDIR /app
 ENTRYPOINT ["sh", "./docker-entrypoint.sh"]
