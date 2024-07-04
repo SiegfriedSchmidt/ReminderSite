@@ -5,3 +5,4 @@ venv
 test
 Dockerfile
 .dockerignore
+__pycache__
