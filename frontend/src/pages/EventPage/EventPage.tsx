@@ -81,7 +81,7 @@ const EventPage = () => {
         <StyledEventPage>
           {isNewEvent ? <h1>Новое событие</h1> : <h1>Событие</h1>}
           <StyledEventEditBlock>
-            <EditFieldInput title="Название" refInput={refTitle} defaultValue={eventData.title}/>
+            <EditFieldInput autoFocus title="Название" refInput={refTitle} defaultValue={eventData.title}/>
             <EditFieldInput title="Дата" refInput={refDate} type="date"
                             defaultValue={getDateForEditField(eventData.date)}/>
             <EditFieldTextarea title="Описание" refInput={refDescription} defaultValue={eventData.description}/>
