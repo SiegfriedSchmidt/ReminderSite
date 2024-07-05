@@ -20,6 +20,7 @@ def get_seconds(time: datetime):
 def register_all_jobs():
     logger.info('Registering all events')
     events = get_today_events()
+    logger.info(f'Find {len(events)} today events')
     for event in events:
         seconds_event = get_seconds(datetime.strptime(event['timeNotification'], '%H:%M'))
         seconds_now = get_seconds(datetime.now())
@@ -30,11 +31,13 @@ def register_all_jobs():
                 pushSubscriptions=event["pushSubscriptions"], title=event["title"], body=f'Лет {event["years"]}'
             )
 
+    job = schedule.every().day.at(register_events_time).do(register_all_jobs)
+    logger.info(f'Schedule registering all events (next_run: {job.next_run})')
+    return schedule.CancelJob
+
 
 def main():
     register_all_jobs()
-    schedule.every().day.at(register_events_time).do(register_all_jobs)
-    logger.info(f'Schedule registering all events (next_run: {schedule.get_jobs()[0].next_run})')
     while True:
         schedule.run_pending()
         time.sleep(1)

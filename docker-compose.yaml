@@ -1,13 +1,13 @@
 services:
   frontend:
-    #platform: linux/amd64
+    platform: linux/amd64
     build: ./frontend
     image: siegfriedschmidt/reminder-frontend
     container_name: reminder-frontend
     ports:
-      - "8080:80"
+      - "0.0.0.0:10001:80"
   backend:
-    #platform: linux/amd64
+    platform: linux/amd64
     build: ./backend
     image: siegfriedschmidt/reminder-backend
     container_name: reminder-backend
@@ -18,19 +18,19 @@ services:
       - ADMIN_EMAIL=admin@mail.ru
       - HOST=0.0.0.0
       - PORT=8001
+      - TZ=UTC+3
     expose: 
       - "8001"
     volumes:
       - /Users/matvei/Developer/Projects/ReminderSite/reminder-data:/reminder-data
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8001/api/ || exit 1"]
-      interval: 30s
-      timeout: 10s
+      interval: 86400s
       start_period: 10s
-      #start_interval: 5s
+      start_interval: 5s
       retries: 5
   cron:
-    #platform: linux/amd64
+    platform: linux/amd64
     build: ./cron
     image: siegfriedschmidt/reminder-cron
     container_name: reminder-cron
@@ -43,5 +43,6 @@ services:
       - REGISTER_EVENTS_TIME=08:00
       - DISABLE_NOTIFICATION_TIMEOUT=10
       - SECRET_FOLDER_PATH=/reminder-data/secret
+      - TZ=UTC+3
     volumes:
       - /Users/matvei/Developer/Projects/ReminderSite/reminder-data:/reminder-data
