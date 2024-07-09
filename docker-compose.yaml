@@ -17,6 +17,8 @@ services:
     networks:
       - proxy-net
       - default
+    restart: unless-stopped
+
   reminder-backend:
     platform: linux/amd64
     build: ./backend
@@ -29,7 +31,7 @@ services:
       - ADMIN_EMAIL=admin@mail.ru
       - HOST=0.0.0.0
       - PORT=8001
-      - TZ=UTC+3
+      - TZ=Europe/Moscow
     expose:
       - "8001"
     volumes:
@@ -46,6 +48,8 @@ services:
       retries: 5
     networks:
       - default
+    restart: unless-stopped
+
   reminder-cron:
     platform: linux/amd64
     build: ./cron
@@ -60,11 +64,12 @@ services:
       - REGISTER_EVENTS_TIME=00:01
       - DISABLE_NOTIFICATION_TIMEOUT=10
       - SECRET_FOLDER_PATH=/reminder-data/secret
-      - TZ=UTC+3
+      - TZ=Europe/Moscow
     volumes:
       - ./reminder-data:/reminder-data:ro
     networks:
       - default
+    restart: unless-stopped
 
 networks:
   proxy-net:
