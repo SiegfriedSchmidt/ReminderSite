@@ -1,0 +1,20 @@
+services:
+  nginx-for-certbot:
+    image: nginx:stable
+    container_name: nginx-for-certbot
+    environment:
+      - DOMAIN=reminder.noons.ru
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./challenge.conf.template:/etc/nginx/templates/challenge.conf.template:ro
+      - ./certbot/www:/var/www/certbot:ro
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    command: certonly --reinstall --webroot --webroot-path=/var/www/certbot --email admin@mail.ru --agree-tos --no-eff-email -d reminder.noons.ru
+    volumes:
+      - ./certbot/etc:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot

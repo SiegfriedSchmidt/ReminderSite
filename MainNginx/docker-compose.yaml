@@ -1,0 +1,18 @@
+services:
+  nginx:
+    build: ./
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./conf.d:/etc/nginx/templates:ro
+      - ./www:/usr/share/nginx/html:ro
+      - ../CertbotNginx/certbot/etc:/etc/letsencrypt:ro
+    networks:
+      - reminder-external-network
+    restart: unless-stopped
+
+networks:
+  reminder-external-network:
+    external: true
