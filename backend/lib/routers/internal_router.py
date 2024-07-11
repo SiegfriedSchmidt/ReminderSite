@@ -9,7 +9,7 @@ import json
 from lib.config_reader import config
 from lib.gmail_api import GmailApiException
 from lib.init import vapid_private_key_path, admin_email, verify_password
-from lib.models import User, Event, Subscription
+from lib.models import User, Event, Subscription, database
 
 router = APIRouter(prefix='/internal')
 
@@ -106,3 +106,28 @@ async def login_with_telegramId(data: InternalUserWithTelegramId, commons=Depend
     userSettings.telegramId = data.telegramId
     userSettings.save()
     return {'status': 'success'}
+
+
+class EventPydantic(BaseModel):
+    title: str
+    description: str
+    date: str
+
+
+class EventsPydantic(BaseModel):
+    events: List[EventPydantic]
+    username: str
+
+
+@router.post('/add_events')
+async def add_events(data: EventsPydantic, commons=Depends(verify_internal_token)):
+    user = User.select().where(User.username == data.username)
+    if not user.exists():
+        return {'status': 'error', 'content': 'User does not exist'}
+
+    event_ids = []
+    with database.atomic():
+        for event in data.events:
+            created_event = Event.create(title=event.title, description=event.description, date=event.date, user=user)
+            event_ids.append(created_event.id)
+    return {'status': 'success', 'content': {"event_ids": event_ids}}

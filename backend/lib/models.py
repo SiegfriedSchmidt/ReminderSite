@@ -58,7 +58,9 @@ if __name__ == '__main__':
     events = [*Event.select()]
     users = [*User.select()]
     subscriptions = [sub.pushSubscription for sub in Subscription.select(Subscription.pushSubscription)]
-    print(events)
+
+    # print(Event.delete().execute())
+    # print(events)
     # print(userSettings)
     # print([*UserSettings.select()])
     # print(*subscriptions, sep='\n')
