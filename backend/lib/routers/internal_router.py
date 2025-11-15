@@ -1,15 +1,15 @@
 from fastapi import HTTPException, Depends, APIRouter, Header
 from typing import Annotated, List
 from pydantic import BaseModel
-from pywebpush import webpush, WebPushException
+from pywebpush import WebPushException
 import peewee
 import datetime
-import json
 
 from lib.config_reader import config
 from lib.gmail_api import GmailApiException
-from lib.init import vapid_private_key_path, admin_email, verify_password
+from lib.init import verify_password
 from lib.models import User, Event, Subscription, database
+from lib.utils.send_push import send_push
 
 router = APIRouter(prefix='/internal')
 
@@ -73,18 +73,27 @@ class InternalSendPushNotificationPydantic(BaseModel):
 @router.post('/send_push_notifications')
 async def send_push_notifications(data: InternalSendPushNotificationPydantic, commons=Depends(verify_internal_token)):
     try:
-        for pushSub in data.pushSubscriptions:
-            webpush(
-                subscription_info=json.loads(pushSub),
-                data=json.dumps({
-                    'title': data.title,
-                    'body': data.body
-                }),
-                vapid_private_key=vapid_private_key_path,
-                vapid_claims={
-                    'sub': f'mailto:{admin_email}'
-                }
-            )
+        send_push(data.pushSubscriptions, data.title, data.body)
+        return {'status': 'success'}
+    except WebPushException as ex:
+        return {'status': 'error'}
+
+
+class InternalSendPushNotificationByNamePydantic(BaseModel):
+    username: str
+    title: str
+    body: str
+
+
+@router.post('/send_push_notification_by_name')
+async def send_push_notifications_by_name(data: InternalSendPushNotificationByNamePydantic,
+                                          commons=Depends(verify_internal_token)):
+    try:
+        selected_user = User.select().where(User.username == data.username)
+        if not selected_user.exists():
+            return {'status': 'error'}
+
+        send_push([sub.pushSubscription for sub in selected_user.get().subscriptions], data.title, data.body)
         return {'status': 'success'}
     except WebPushException as ex:
         return {'status': 'error'}

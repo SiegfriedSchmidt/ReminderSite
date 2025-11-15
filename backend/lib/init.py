@@ -15,7 +15,7 @@ database_path = Path(
 
 expiration_code_time = int(os.environ.get("EXPIRATION_CODE_TIME", 40))
 admin_email = os.environ.get("ADMIN_EMAIL", 'admin@mail.ru')
-server_host = os.environ.get("HOST", "192.168.1.15")
+server_host = os.environ.get("HOST", "192.168.2.201")
 server_port = int(os.environ.get("PORT", 8001))
 
 vapid_private_key_path = secret_folder_path / 'private_key.pem'

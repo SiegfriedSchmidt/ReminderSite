@@ -39,7 +39,7 @@ const RegisterForm = () => {
 
   async function onSubmit(e: FormEvent<FormElement>) {
     e.preventDefault();
-    const email = e.currentTarget.elements.email.value;
+    const email = 'default-email';
     const username = e.currentTarget.elements.username.value;
     const password = e.currentTarget.elements.password.value;
     const repeatPassword = e.currentTarget.elements.repeatPassword.value;
@@ -78,7 +78,7 @@ const RegisterForm = () => {
     }
 
     onClose()
-    request()
+    void request()
   }
 
   return (
@@ -88,7 +88,7 @@ const RegisterForm = () => {
           Регистрация
         </h1>
         <StyledRegisterFieldsWrapper>
-          <FormField icon={emailIcon} id='email' type='email' placeholder="Почта"/>
+          {/*<FormField icon={emailIcon} id='email' type='email' placeholder="Почта"/>*/}
           <FormField icon={loginIcon} id='username' type='text' placeholder="Логин"/>
           <FormField icon={lockIcon} id='password' type='password' placeholder="Пароль"/>
           <FormField icon={lockIcon} id='repeatPassword' type='password' placeholder="Повтор пароля"/>

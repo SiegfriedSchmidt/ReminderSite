@@ -85,14 +85,15 @@ export function AxiosSettings({children}: { children: ReactNode }) {
         const originalRequest = error.config
 
         if (error.response && ([401, 403, 422].includes(error.response.status)) && user && !originalRequest._retry) {
-          originalRequest._retry = true
           const data = await refreshToken(user.refreshToken)
+          if (data.access_token === user.accessToken) return axiosInstance(error.config)
 
           addUser({
             ...user,
-            "accessToken": data.access_token,
+            accessToken: data.access_token,
           })
 
+          originalRequest._retry = true
           originalRequest.headers["Authorization"] = `Bearer ${data.access_token}`
           console.log("retrying request")
           return axiosInstance(error.config)
@@ -104,7 +105,7 @@ export function AxiosSettings({children}: { children: ReactNode }) {
 
     setSetupDone(true)
     return () => axiosInstance.interceptors.response.eject(JWTUpdater)
-  }, [user])
+  }, [addUser, user])
 
   return setupDone ? children : null;
 }

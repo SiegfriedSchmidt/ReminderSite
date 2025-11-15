@@ -9,7 +9,7 @@ export const StyledRegisterFieldsWrapper = styled(StyledFieldsWrapper)`
         right: 11px
     }
     
-    ${StyledFormField}:nth-child(3) img {
+    ${StyledFormField}:nth-child(2) img {
         width: 26px;
         height: 26px;
         right: 7px

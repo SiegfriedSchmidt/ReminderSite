@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import Depends, Request, APIRouter
 from fastapi_another_jwt_auth import AuthJWT
 from pydantic import BaseModel
@@ -51,8 +53,8 @@ async def login(request: Request, user: UserPydantic, Authorize: AuthJWT = Depen
     if not selected_user.exists() or not verify_password(user.password, (user_auth := selected_user.get()).password):
         return {'status': 'error', 'content': 'Неверный логин или пароль!'}
 
-    access_token = Authorize.create_access_token(subject=user.username)
-    refresh_token = Authorize.create_refresh_token(subject=user.username)
+    access_token = Authorize.create_access_token(subject=user.username, expires_time=timedelta(days=3650))
+    refresh_token = Authorize.create_refresh_token(subject=user.username, expires_time=timedelta(days=3650))
     userSettings = user_auth.userSettings.get()
     return {'status': 'success', 'content': json_user_data(access_token, refresh_token, user_auth, userSettings)}
 

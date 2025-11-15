@@ -17,18 +17,17 @@ const AccountPage = () => {
   const {successToast, warningToast, errorToast} = useConfiguredToast()
   const [switchEmail, setSwitchEmail] = useState<boolean>(false);
 
-
   function onClickButtonExit() {
     removeUser()
   }
 
   async function onInputTime(time: string) {
-    console.log(time)
     if (userSettings) {
       const rs = await updateUserSettings({timeNotification: time})
       if (rs.status !== "success") {
         return errorToast("Ошибка", rs.content)
       }
+      if (userSettings.timeNotification === time) return
       addUserSettings({...userSettings, timeNotification: time})
       successToast('Время уведомления изменено')
     }
@@ -45,7 +44,7 @@ const AccountPage = () => {
           }
           const NOTIFICATION_KEY = rs.content.applicationServerKey
 
-          await registerServiceWorker('./service-worker.js')
+          await registerServiceWorker(`./service-worker.js`)
           await getPushPermission()
           const subscription = await subscribeNotifications(NOTIFICATION_KEY)
 
@@ -55,6 +54,9 @@ const AccountPage = () => {
           }
           successToast('Всплывающие уведомления включены')
         } catch (error) {
+          setTimeout(() => {
+            e.target.checked = false
+          }, 500)
           return errorToast(`Ошибка подписки на уведомления! ${error}`)
         }
       } else {
